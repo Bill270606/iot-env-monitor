@@ -7,7 +7,7 @@
 <title>Dashboard — EnvMonitor</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<link rel="stylesheet" href="/static/dashboard.css?v=6"/>
+<link rel="stylesheet" href="/static/dashboard.css?v=7"/>
 </head>
 <body class="is-loading">
 
@@ -75,6 +75,53 @@
       <h3 class="ce-title">Connection lost</h3>
       <p class="ce-desc">We can't reach the sensor server right now. Your data may be out of date.</p>
       <button class="ce-retry" id="ce-retry">🔄 Retry</button>
+    </div>
+
+    <!-- GARDEN STATUS (farmer-friendly) -->
+    <div class="garden-status" id="garden-status">
+      <div class="gs-head">
+        <span class="gs-emoji">🌱</span>
+        <h2 class="gs-title">Tình trạng vườn hiện tại</h2>
+      </div>
+      <div class="gs-badge ok" id="gs-badge">🟢 Môi trường tốt</div>
+      <div class="gs-readouts">
+        <div class="gs-readout"><span class="gs-r-icon">🌡️</span><span class="gs-r-label">Nhiệt độ</span><span class="gs-r-value" id="gs-temp">-- °C</span></div>
+        <div class="gs-readout"><span class="gs-r-icon">💧</span><span class="gs-r-label">Độ ẩm</span><span class="gs-r-value" id="gs-hum">-- %</span></div>
+        <div class="gs-readout"><span class="gs-r-icon">☀️</span><span class="gs-r-label">Ánh sáng</span><span class="gs-r-value" id="gs-lux">--</span></div>
+      </div>
+      <div class="skeleton-overlay"></div>
+    </div>
+
+    <div class="farmer-grid">
+      <div class="farmer-block" id="fb-temp-block">
+        <div class="fb-icon">🌡️</div>
+        <div class="fb-label">Nhiệt độ</div>
+        <div class="fb-value" id="fb-temp-value">-- °C</div>
+        <div class="fb-status ok" id="fb-temp-status">Trạng thái: --</div>
+        <div class="skeleton-overlay"></div>
+      </div>
+      <div class="farmer-block" id="fb-hum-block">
+        <div class="fb-icon">💧</div>
+        <div class="fb-label">Độ ẩm</div>
+        <div class="fb-value" id="fb-hum-value">-- %</div>
+        <div class="fb-status ok" id="fb-hum-status">Trạng thái: --</div>
+        <div class="skeleton-overlay"></div>
+      </div>
+      <div class="farmer-block" id="fb-lux-block">
+        <div class="fb-icon">☀️</div>
+        <div class="fb-label">Ánh sáng</div>
+        <div class="fb-value" id="fb-lux-value">-- lux</div>
+        <div class="fb-status ok" id="fb-lux-status">Trạng thái: --</div>
+        <div class="skeleton-overlay"></div>
+      </div>
+      <div class="farmer-block fb-alerts-block" id="fb-alerts-block">
+        <div class="fb-icon">🚨</div>
+        <div class="fb-label">Cảnh báo</div>
+        <div class="fb-alerts-list" id="fb-alerts-list">
+          <div class="fb-ok">✅ Chưa có cảnh báo nào</div>
+        </div>
+        <div class="skeleton-overlay"></div>
+      </div>
     </div>
 
     <!-- STAT CARDS -->
@@ -253,6 +300,6 @@
 </div>
 
 <script src="/static/shell.js?v=2"></script>
-<script src="/static/dashboard.js?v=4"></script>
+<script src="/static/dashboard.js?v=5"></script>
 </body>
 </html>

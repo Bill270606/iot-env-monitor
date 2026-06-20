@@ -107,6 +107,42 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);display:
 /* ── CONTENT ── */
 .content{padding:24px 28px;flex:1}
 
+/* GARDEN STATUS (farmer-friendly) */
+.garden-status{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--b);border-radius:20px;padding:24px 28px;margin-bottom:20px;text-align:center}
+.gs-head{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px}
+.gs-emoji{font-size:1.5rem}
+.gs-title{font-size:1.15rem;font-weight:800}
+.gs-badge{display:inline-block;font-size:1rem;font-weight:800;padding:8px 22px;border-radius:30px;margin-bottom:20px}
+.gs-badge.ok{background:#00ff4418;color:#00cc44}
+.gs-badge.warn{background:#ffb70020;color:#ffb700}
+.gs-badge.danger{background:#ff2d5520;color:#ff5575}
+.gs-readouts{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.gs-readout{display:flex;flex-direction:column;align-items:center;gap:4px}
+.gs-r-icon{font-size:1.4rem}
+.gs-r-label{font-size:.75rem;color:var(--m);font-weight:600}
+.gs-r-value{font-size:1.2rem;font-weight:800}
+
+.farmer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.farmer-block{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--b);border-radius:18px;padding:22px;text-align:center}
+.fb-icon{font-size:2rem;margin-bottom:8px}
+.fb-label{font-size:.85rem;font-weight:700;color:var(--m);margin-bottom:10px}
+.fb-value{font-size:1.6rem;font-weight:800;margin-bottom:10px}
+.fb-status{display:inline-block;font-size:.78rem;font-weight:700;padding:5px 14px;border-radius:20px}
+.fb-status.ok{background:#00ff4418;color:#00cc44}
+.fb-status.warn{background:#ffb70020;color:#ffb700}
+.fb-status.danger{background:#ff2d5520;color:#ff5575}
+.fb-alerts-block{text-align:left}
+.fb-alerts-block .fb-icon,.fb-alerts-block .fb-label{text-align:center}
+.fb-alerts-list{display:flex;flex-direction:column;gap:8px;max-height:170px;overflow-y:auto}
+.fb-alert-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:10px;font-size:.78rem;line-height:1.5;font-weight:600}
+.fb-alert-item.danger{background:#ff2d5512;color:#ff7090}
+.fb-alert-item.warn{background:#ffb70015;color:#ffb700}
+.fb-alert-item.info{background:#6366f112;color:#a5b4fc}
+.fb-alert-icon{flex-shrink:0}
+.fb-ok{text-align:center;color:var(--m);font-size:.82rem;padding:20px 0}
+@media(max-width:1200px){.farmer-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.farmer-grid{grid-template-columns:1fr}.gs-readouts{gap:20px}}
+
 /* STAT CARDS */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
 .stat-card{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:18px;display:flex;align-items:center;gap:14px}

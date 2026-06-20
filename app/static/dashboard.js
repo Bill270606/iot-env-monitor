@@ -464,6 +464,86 @@ document.getElementById('ce-retry')?.addEventListener('click', async () => {
   btn.textContent = '🔄 Retry';
 });
 
+// ── FARMER-FRIENDLY GARDEN STATUS ──
+const FARMER_THRESHOLDS = { tempLow: 18, humLow: 30, luxLow: 200 };
+
+function setFarmerBlock(key, value, label, status) {
+  const valEl = document.getElementById(`fb-${key}-value`);
+  const statusEl = document.getElementById(`fb-${key}-status`);
+  if(valEl) valEl.textContent = value;
+  if(statusEl) {
+    statusEl.textContent = `Trạng thái: ${label}`;
+    statusEl.className = 'fb-status ' + status;
+  }
+}
+
+function renderFarmerAlerts(alerts) {
+  const list = document.getElementById('fb-alerts-list');
+  if(!list) return;
+  if(alerts.length === 0) {
+    list.innerHTML = '<div class="fb-ok">✅ Chưa có cảnh báo nào</div>';
+    return;
+  }
+  list.innerHTML = alerts.map(a => `
+    <div class="fb-alert-item ${a.level}">
+      <span class="fb-alert-icon">${a.icon}</span>
+      <span class="fb-alert-text">${a.text}</span>
+    </div>`).join('');
+}
+
+function updateFarmerView(d) {
+  const tempWarn = SENSORS.temp.warn ?? 35;
+  const humWarn  = SENSORS.hum.warn  ?? 85;
+  const soilWarn = SENSORS.soil.warn ?? 3000;
+  const { tempLow, humLow, luxLow } = FARMER_THRESHOLDS;
+
+  let tempStatus = 'ok', tempLabel = 'Tốt';
+  if(d.temperature > tempWarn)      { tempStatus = 'danger'; tempLabel = 'Cao'; }
+  else if(d.temperature < tempLow)  { tempStatus = 'warn';   tempLabel = 'Thấp'; }
+
+  let humStatus = 'ok', humLabel = 'Tốt';
+  if(d.humidity > humWarn)      { humStatus = 'warn'; humLabel = 'Cao'; }
+  else if(d.humidity < humLow)  { humStatus = 'warn'; humLabel = 'Thấp'; }
+
+  let luxStatus = 'ok', luxLabel = 'Đạt yêu cầu';
+  if(d.lux < luxLow) { luxStatus = 'warn'; luxLabel = 'Thiếu sáng'; }
+
+  // Top summary readouts
+  const gsTemp = document.getElementById('gs-temp');
+  const gsHum  = document.getElementById('gs-hum');
+  const gsLux  = document.getElementById('gs-lux');
+  if(gsTemp) gsTemp.textContent = `${d.temperature} °C`;
+  if(gsHum)  gsHum.textContent  = `${d.humidity} %`;
+  if(gsLux)  gsLux.textContent  = luxLabel;
+
+  // 4 big blocks
+  setFarmerBlock('temp', `${d.temperature} °C`, tempLabel, tempStatus);
+  setFarmerBlock('hum',  `${d.humidity} %`,     humLabel,  humStatus);
+  setFarmerBlock('lux',  `${d.lux} lux`,        luxLabel,  luxStatus);
+
+  // Plain-language alerts
+  const alerts = [];
+  if(tempStatus === 'danger') alerts.push({ level:'danger', icon:'🔴', text:`Nhiệt độ đang quá cao (${d.temperature}°C). Nên tưới nước hoặc che mát cho cây.` });
+  else if(tempStatus === 'warn') alerts.push({ level:'warn', icon:'🟠', text:`Nhiệt độ đang thấp (${d.temperature}°C). Cây có thể chậm phát triển, nên che chắn gió lạnh.` });
+
+  if(humLabel === 'Thấp') alerts.push({ level:'warn', icon:'🟠', text:`Độ ẩm không khí thấp (${d.humidity}%). Nên tưới phun sương hoặc tăng độ ẩm.` });
+  else if(humLabel === 'Cao') alerts.push({ level:'warn', icon:'🟠', text:`Độ ẩm không khí cao (${d.humidity}%). Cây dễ bị nấm bệnh, nên thông gió cho vườn.` });
+
+  if(luxStatus === 'warn') alerts.push({ level:'info', icon:'🟡', text:'Ánh sáng yếu. Cây có thể không quang hợp đủ, nên kiểm tra lại vị trí đặt cây.' });
+
+  if(d.soilAO > soilWarn) alerts.push({ level:'warn', icon:'🟠', text:'Độ ẩm đất thấp. Cây có thể thiếu nước. Nên kiểm tra hệ thống tưới.' });
+
+  renderFarmerAlerts(alerts);
+
+  // Overall badge
+  const badge = document.getElementById('gs-badge');
+  if(badge) {
+    if(alerts.some(a => a.level === 'danger')) { badge.textContent = '🔴 Cảnh báo';      badge.className = 'gs-badge danger'; }
+    else if(alerts.length > 0)                 { badge.textContent = '🟠 Cần chú ý';      badge.className = 'gs-badge warn'; }
+    else                                        { badge.textContent = '🟢 Môi trường tốt'; badge.className = 'gs-badge ok'; }
+  }
+}
+
 // ── MAIN UPDATE ──
 const prevAlerts = {};
 
@@ -518,6 +598,9 @@ async function fetchData() {
     // Chart
     addChartPoint(d);
     pushHistory(d);
+
+    // Farmer-friendly summary
+    updateFarmerView(d);
 
   } catch(e) {
     document.body.classList.remove('is-loading');
