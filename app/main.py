@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.requests import Request
 from pydantic import BaseModel
 from typing import Optional
 import math, time, random
@@ -8,6 +10,12 @@ from collections import deque
 
 app = FastAPI(title="EnvMonitor IoT")
 history = deque(maxlen=50)
+
+@app.exception_handler(StarletteHTTPException)
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    if exc.status_code == 404:
+        return FileResponse("app/static/404.html", status_code=404)
+    return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
 
 # Real device data: set by POST /data/sensor (ESP32 Receiver Gateway), read by GET /data/latest.
 last_device_data = None

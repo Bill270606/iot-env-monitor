@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg"/>
+<meta name="theme-color" content="#0d1626"/>
 <title>Charts — EnvMonitor</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<link rel="stylesheet" href="/static/dashboard.css?v=5"/>
+<link rel="stylesheet" href="/static/dashboard.css?v=6"/>
 </head>
 <body class="is-loading">
 
@@ -33,7 +35,7 @@
       <div class="sb-name" id="sb-name">User</div>
       <div class="sb-role">Admin</div>
     </div>
-    <button class="sb-logout" onclick="logout()" title="Logout">⏏</button>
+    <button class="sb-logout" onclick="logout()" title="Logout" aria-label="Logout">⏏</button>
   </div>
 </aside>
 
@@ -41,14 +43,14 @@
 <div class="main" id="main">
   <header class="topbar">
     <div class="topbar-l">
-      <button class="hamburger" onclick="toggleSidebar()" id="hamburger">☰</button>
+      <button class="hamburger" onclick="toggleSidebar()" id="hamburger" aria-label="Toggle sidebar">☰</button>
       <div>
         <h1 class="page-title">Charts</h1>
         <p class="page-sub">Recent history per sensor</p>
       </div>
     </div>
     <div class="topbar-r">
-      <button class="theme-toggle" id="theme-toggle" title="Toggle Dark / Light mode (D)">🌙</button>
+      <button class="theme-toggle" id="theme-toggle" title="Toggle Dark / Light mode (D)" aria-label="Toggle dark or light mode">🌙</button>
       <button class="notif-btn" id="notif-btn">
         🔔
         <span class="notif-badge" id="notif-badge" style="display:none">0</span>
@@ -70,14 +72,14 @@
   </div>
 </div>
 
-<button class="shortcuts-trigger" id="shortcuts-trigger" title="Keyboard shortcuts">?</button>
+<button class="shortcuts-trigger" id="shortcuts-trigger" title="Keyboard shortcuts" aria-label="Show keyboard shortcuts">?</button>
 <div class="shortcuts-panel" id="shortcuts-panel">
   <div class="sp-title">Keyboard shortcuts</div>
   <div class="sp-row"><span>Toggle dark / light mode</span><kbd>D</kbd></div>
   <div class="sp-row"><span>Refresh data</span><kbd>R</kbd></div>
 </div>
 
-<script src="/static/shell.js?v=1"></script>
+<script src="/static/shell.js?v=2"></script>
 <script src="/static/charts.js?v=2"></script>
 </body>
 </html>
