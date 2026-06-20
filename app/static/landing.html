@@ -15,13 +15,22 @@ a{text-decoration:none}
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--b)}
 .logo{font-size:1.1rem;font-weight:900;letter-spacing:1.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.nav-r{display:flex;align-items:center;gap:28px}
-.nav-r a{color:var(--m);font-size:.88rem;font-weight:500;transition:color .2s}
-.nav-r a:hover{color:var(--t)}
+.nav-r{display:flex;align-items:center;gap:30px}
+.nav-r a:not(.nav-cta){color:var(--m);font-size:.78rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;transition:color .2s}
+.nav-r a:not(.nav-cta):hover{color:var(--t)}
 .btn{display:inline-flex;align-items:center;gap:7px;background:var(--grad);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-size:.88rem;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s}
 .btn:hover{opacity:.88}.btn:active{transform:scale(.97)}
 .btn-out{display:inline-flex;align-items:center;gap:7px;background:transparent;color:var(--t);border:1px solid var(--b);border-radius:10px;padding:9px 20px;font-size:.88rem;font-weight:500;transition:border-color .2s,background .2s}
 .btn-out:hover{border-color:var(--p);background:#6366f10c}
+.nav-cta{display:inline-flex;align-items:center;gap:7px;background:transparent;color:var(--t);border:1.5px solid var(--t);border-radius:8px;padding:9px 22px;font-size:.76rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase;transition:background .2s,color .2s}
+.nav-cta:hover{background:var(--t);color:#fff}
+
+/* SOCIAL RAIL */
+.social-rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;z-index:90}
+.social-icon{width:40px;height:40px;border-radius:50%;background:var(--card);border:1px solid var(--b);display:flex;align-items:center;justify-content:center;color:var(--m);box-shadow:0 4px 14px #0f172914;transition:background .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1),transform .2s cubic-bezier(.4,0,.2,1)}
+.social-icon:hover{background:var(--t);color:#fff;transform:scale(1.08)}
+.social-icon svg{width:18px;height:18px;fill:currentColor}
+@media(max-width:900px){.social-rail{display:none}}
 
 /* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:130px 24px 80px;position:relative;overflow:hidden;text-align:center}
@@ -118,11 +127,19 @@ footer p.fmuted{opacity:.7}
 <nav>
   <div class="logo">◈ ENVMONITOR</div>
   <div class="nav-r">
+    <a href="/">Home</a>
     <a href="#features">Features</a>
     <a href="#how">How it works</a>
-    <a href="/login" class="btn">Login →</a>
+    <a href="/login" class="nav-cta">Login</a>
   </div>
 </nav>
+
+<!-- Floating social rail -->
+<div class="social-rail">
+  <a href="https://github.com/Bill270606/iot-env-monitor" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub repository">
+    <svg viewBox="0 0 24 24"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.53-1.33-1.29-1.69-1.29-1.69-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.2-3.1-.12-.29-.52-1.46.11-3.05 0 0 .98-.31 3.2 1.18a11.1 11.1 0 0 1 5.83 0c2.22-1.49 3.2-1.18 3.2-1.18.63 1.59.23 2.76.11 3.05.75.81 1.2 1.84 1.2 3.1 0 4.43-2.69 5.41-5.25 5.69.42.36.78 1.07.78 2.17v3.22c0 .3.21.66.79.55C20.21 21.38 23.5 17.07 23.5 12 23.5 5.73 18.27.5 12 .5Z"/></svg>
+  </a>
+</div>
 
 <!-- HERO -->
 <div class="hero">
