@@ -47,6 +47,18 @@ def login_page(): return FileResponse("app/static/login.html")
 @app.get("/dashboard")
 def dashboard():  return FileResponse("app/static/dashboard.html")
 
+@app.get("/sensors")
+def sensors_page(): return FileResponse("app/static/sensors.html")
+
+@app.get("/alerts")
+def alerts_page(): return FileResponse("app/static/alerts.html")
+
+@app.get("/charts")
+def charts_page(): return FileResponse("app/static/charts.html")
+
+@app.get("/settings")
+def settings_page(): return FileResponse("app/static/settings.html")
+
 @app.post("/auth/login")
 def do_login(data: LoginData):
     name = data.email.split("@")[0].replace(".", " ").title() if "@" in data.email else "Demo User"

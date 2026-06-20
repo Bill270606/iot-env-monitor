@@ -5,7 +5,7 @@
 <title>Dashboard — EnvMonitor</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<link rel="stylesheet" href="/static/dashboard.css?v=2"/>
+<link rel="stylesheet" href="/static/dashboard.css?v=4"/>
 </head>
 <body class="is-loading">
 
@@ -18,14 +18,14 @@
   <nav class="sb-nav">
     <div class="nav-group-label">MAIN</div>
     <a href="/dashboard" class="nav-item active"><span class="ni">🏠</span> Overview</a>
-    <a href="#" class="nav-item"><span class="ni">📡</span> Sensors</a>
-    <a href="#" class="nav-item"><span class="ni">⚠️</span> Alerts <span class="badge-n" id="alert-count">0</span></a>
+    <a href="/sensors" class="nav-item"><span class="ni">📡</span> Sensors</a>
+    <a href="/alerts" class="nav-item"><span class="ni">⚠️</span> Alerts <span class="badge-n" id="alert-count">0</span></a>
     <div class="nav-group-label" style="margin-top:20px">REPORTS</div>
-    <a href="#" class="nav-item"><span class="ni">📊</span> Charts</a>
-    <a href="#" class="nav-item"><span class="ni">📋</span> Logs</a>
+    <a href="/charts" class="nav-item"><span class="ni">📊</span> Charts</a>
+    <a href="#" class="nav-item disabled"><span class="ni">📋</span> Logs <span class="soon-badge">Soon</span></a>
     <div class="nav-group-label" style="margin-top:20px">SYSTEM</div>
-    <a href="#" class="nav-item"><span class="ni">⚙️</span> Settings</a>
-    <a href="#" class="nav-item"><span class="ni">❓</span> Help</a>
+    <a href="/settings" class="nav-item"><span class="ni">⚙️</span> Settings</a>
+    <a href="#" class="nav-item disabled"><span class="ni">❓</span> Help <span class="soon-badge">Soon</span></a>
   </nav>
   <div class="sb-user" id="sb-user">
     <div class="sb-avatar" id="sb-avatar">U</div>
@@ -250,6 +250,7 @@
   <div class="sp-row"><span>Close modal / overlay</span><kbd>Esc</kbd></div>
 </div>
 
-<script src="/static/dashboard.js?v=2"></script>
+<script src="/static/shell.js?v=1"></script>
+<script src="/static/dashboard.js?v=3"></script>
 </body>
 </html>

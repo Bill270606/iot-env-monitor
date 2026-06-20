@@ -1,38 +1,4 @@
-// ── AUTH CHECK ──
-const user = JSON.parse(localStorage.getItem('em_user') || 'null');
-if (!user) { window.location.href = '/login'; }
-else {
-  const initial = (user.name || 'U')[0].toUpperCase();
-  ['sb-avatar','chip-avatar'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.textContent = initial;
-  });
-  const nameEl = document.getElementById('sb-name');
-  const chipEl = document.getElementById('chip-name');
-  if(nameEl) nameEl.textContent = user.name || 'User';
-  if(chipEl) chipEl.textContent = (user.name || 'User').split(' ').slice(-1)[0];
-}
-
-function logout() {
-  localStorage.removeItem('em_user');
-  window.location.href = '/login';
-}
-
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-}
-
-// ── THEME ──
-function applyTheme(theme) {
-  document.body.dataset.theme = theme;
-  localStorage.setItem('em_theme', theme);
-  const btn = document.getElementById('theme-toggle');
-  if(btn) btn.textContent = theme === 'light' ? '☀️' : '🌙';
-  updateChartTheme(theme);
-}
-function toggleTheme() {
-  applyTheme(document.body.dataset.theme === 'light' ? 'dark' : 'light');
-}
+// ── THEME (chart-specific hook, called by shell.js) ──
 function updateChartTheme(theme) {
   const grid = theme === 'light' ? '#e5e9f2' : '#1a2d4a60';
   const gridAlt = theme === 'light' ? '#e5e9f2a0' : '#1a2d4a40';
@@ -47,7 +13,6 @@ function updateChartTheme(theme) {
     focusChart.update();
   }
 }
-document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
 
 // ── CONFIG ──
 const ARC = 235.6;
@@ -59,6 +24,14 @@ const SENSORS = {
   co2:  { min:400,max:2000, warn:1000, color:'#ffb700', unit:'ppm'   },
   pm25: { min:0,  max:150,  warn:75,   color:'#ff006e', unit:'μg/m³' },
 };
+
+// Apply any custom thresholds saved from the Settings page
+(function applyThresholdOverrides() {
+  const saved = JSON.parse(localStorage.getItem('em_thresholds') || '{}');
+  Object.keys(saved).forEach(key => {
+    if(SENSORS[key] && typeof saved[key] === 'number') SENSORS[key].warn = saved[key];
+  });
+})();
 
 const UI_META = {
   temp: { icon:'🌡️', name:'Temperature', unit:'°C'    },
@@ -289,37 +262,6 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Escape' && document.getElementById('cmdk-overlay').classList.contains('open')) closeCmdk();
 });
 
-// ── KEYBOARD SHORTCUTS (D / R) + HINT PANEL ──
-function isTypingTarget(el) {
-  const tag = (el.tagName || '').toLowerCase();
-  return tag === 'input' || tag === 'textarea' || el.isContentEditable;
-}
-
-document.addEventListener('keydown', e => {
-  if(e.ctrlKey || e.metaKey || e.altKey || isTypingTarget(e.target)) return;
-  if(e.key.toLowerCase() === 'd') { e.preventDefault(); toggleTheme(); }
-  else if(e.key.toLowerCase() === 'r') { e.preventDefault(); fetchData(); }
-});
-
-function toggleShortcutsPanel() {
-  document.getElementById('shortcuts-panel').classList.toggle('open');
-}
-function closeShortcutsPanel() {
-  document.getElementById('shortcuts-panel').classList.remove('open');
-}
-document.getElementById('shortcuts-trigger')?.addEventListener('click', e => {
-  e.stopPropagation();
-  toggleShortcutsPanel();
-});
-document.addEventListener('click', e => {
-  const panel = document.getElementById('shortcuts-panel');
-  const trigger = document.getElementById('shortcuts-trigger');
-  if(panel && panel.classList.contains('open') && !panel.contains(e.target) && e.target !== trigger) closeShortcutsPanel();
-});
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') closeShortcutsPanel();
-});
-
 // ── STATS ──
 let readings = 0;
 let alertCount = 0;
@@ -454,8 +396,13 @@ const alertsLog = [];
 
 function addAlert(msg) {
   const now = new Date().toLocaleTimeString('en-US');
-  alertsLog.unshift({ msg, time: now });
+  const entry = { msg, time: now, date: new Date().toLocaleDateString('en-US'), ts: Date.now() };
+  alertsLog.unshift(entry);
   if(alertsLog.length > 20) alertsLog.pop();
+
+  const persisted = JSON.parse(localStorage.getItem('em_alerts') || '[]');
+  persisted.unshift(entry);
+  localStorage.setItem('em_alerts', JSON.stringify(persisted.slice(0, 50)));
 
   alertCount++;
   const countEls = [
@@ -586,4 +533,5 @@ async function fetchData() {
 fetchData();
 setInterval(fetchData, 2000);
 
-applyTheme(localStorage.getItem('em_theme') || 'dark');
+const pageRefresh = fetchData;
+updateChartTheme(document.body.dataset.theme || 'dark');
