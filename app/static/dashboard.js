@@ -22,6 +22,33 @@ function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
 }
 
+// ── THEME ──
+function applyTheme(theme) {
+  document.body.dataset.theme = theme;
+  localStorage.setItem('em_theme', theme);
+  const btn = document.getElementById('theme-toggle');
+  if(btn) btn.textContent = theme === 'light' ? '☀️' : '🌙';
+  updateChartTheme(theme);
+}
+function toggleTheme() {
+  applyTheme(document.body.dataset.theme === 'light' ? 'dark' : 'light');
+}
+function updateChartTheme(theme) {
+  const grid = theme === 'light' ? '#e5e9f2' : '#1a2d4a60';
+  const gridAlt = theme === 'light' ? '#e5e9f2a0' : '#1a2d4a40';
+  if(chart) {
+    chart.options.scales.x.grid.color = grid;
+    chart.options.scales.y1.grid.color = gridAlt;
+    chart.update();
+  }
+  if(focusChart) {
+    focusChart.options.scales.x.grid.color = grid;
+    focusChart.options.scales.y.grid.color = gridAlt;
+    focusChart.update();
+  }
+}
+document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+
 // ── CONFIG ──
 const ARC = 235.6;
 const SENSORS = {
@@ -32,6 +59,266 @@ const SENSORS = {
   co2:  { min:400,max:2000, warn:1000, color:'#ffb700', unit:'ppm'   },
   pm25: { min:0,  max:150,  warn:75,   color:'#ff006e', unit:'μg/m³' },
 };
+
+const UI_META = {
+  temp: { icon:'🌡️', name:'Temperature', unit:'°C'    },
+  hum:  { icon:'💧',  name:'Humidity',    unit:'%'     },
+  wind: { icon:'🌬️', name:'Wind Speed',  unit:'m/s'   },
+  pres: { icon:'🌐',  name:'Pressure',    unit:'hPa'   },
+  co2:  { icon:'🫁',  name:'CO₂',         unit:'ppm'   },
+  pm25: { icon:'💨',  name:'PM2.5',       unit:'μg/m³' },
+};
+
+const lastValues = {};
+const sensorHistory = { temp:[], hum:[], wind:[], pres:[], co2:[], pm25:[] };
+let currentFocusKey = null;
+let focusChart = null;
+
+// ── VIEW SWITCHING ──
+function setView(view) {
+  document.querySelectorAll('.vt-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  const gridEl = document.getElementById('grid-view');
+  const listEl = document.getElementById('list-view');
+  if(gridEl) gridEl.style.display = view === 'list' ? 'none' : '';
+  if(listEl) listEl.style.display = view === 'list' ? 'flex' : 'none';
+  localStorage.setItem('em_view', view);
+}
+
+document.querySelectorAll('.vt-btn').forEach(btn => {
+  btn.addEventListener('click', () => setView(btn.dataset.view));
+});
+setView(localStorage.getItem('em_view') || 'grid');
+
+// ── LIST VIEW ROWS ──
+function renderListView() {
+  const body = document.getElementById('list-body');
+  if(!body) return;
+  body.innerHTML = Object.keys(SENSORS).map(key => {
+    const meta = UI_META[key];
+    return `
+    <div class="list-row" id="lr-${key}" onclick="openFocus('${key}')">
+      <span class="lr-name"><span class="lr-icon">${meta.icon}</span>${meta.name}</span>
+      <span class="lr-value" id="lrv-${key}">-- ${meta.unit}</span>
+      <span class="lr-badge" id="lrb-${key}">—</span>
+      <span class="lr-arrow">›</span>
+    </div>`;
+  }).join('');
+}
+renderListView();
+
+// ── FOCUS VIEW ──
+function openFocus(key) {
+  const meta = UI_META[key];
+  const cfg = SENSORS[key];
+  if(!meta || !cfg) return;
+  currentFocusKey = key;
+
+  document.getElementById('fm-icon').textContent = meta.icon;
+  document.getElementById('fm-name').textContent = meta.name;
+  document.getElementById('fm-sub').textContent = meta.unit;
+
+  renderFocusValue();
+
+  const hist = sensorHistory[key] || [];
+  if(!focusChart) {
+    focusChart = new Chart(document.getElementById('focus-chart').getContext('2d'), {
+      type: 'line',
+      data: { labels: [], datasets: [{ data: [], borderColor: cfg.color, backgroundColor: cfg.color + '30', borderWidth: 2, fill: true, tension: .4, pointRadius: 2 }] },
+      options: {
+        responsive: true, animation: { duration: 200 },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: '#1a2d4a60' }, ticks: { color: '#4a6a8a', maxTicksLimit: 6, font: { size: 10 } }, border: { color: '#1a2d4a' } },
+          y: { grid: { color: '#1a2d4a40' }, ticks: { color: '#4a6a8a', font: { size: 10 } }, border: { color: '#1a2d4a' } },
+        }
+      }
+    });
+  }
+  focusChart.data.datasets[0].borderColor = cfg.color;
+  focusChart.data.datasets[0].backgroundColor = cfg.color + '30';
+  focusChart.data.labels = hist.map(h => h.t);
+  focusChart.data.datasets[0].data = hist.map(h => h.v);
+  focusChart.update();
+  document.getElementById('focus-chart-empty')?.classList.toggle('show', hist.length === 0);
+
+  document.getElementById('focus-modal').classList.add('open');
+}
+
+function renderFocusValue() {
+  const key = currentFocusKey;
+  if(!key) return;
+  const meta = UI_META[key];
+  const cfg = SENSORS[key];
+  const val = lastValues[key];
+  const valEl = document.getElementById('fm-value');
+  const badgeEl = document.getElementById('fm-badge');
+  if(val == null) {
+    valEl.textContent = '--';
+    badgeEl.textContent = '—';
+    badgeEl.className = 'focus-badge';
+    return;
+  }
+  valEl.innerHTML = `${val} <span style="font-size:1.1rem;color:var(--m)">${meta.unit}</span>`;
+  const warn = cfg.warn !== null && val > cfg.warn;
+  badgeEl.textContent = warn ? '⚠ High' : '✓ Normal';
+  badgeEl.className = 'focus-badge ' + (warn ? 'warn' : 'ok');
+}
+
+function closeFocus() {
+  document.getElementById('focus-modal').classList.remove('open');
+  currentFocusKey = null;
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && document.getElementById('focus-modal').classList.contains('open')) closeFocus();
+});
+
+function pushHistory(d) {
+  const map = { temp: d.temperature, hum: d.humidity, wind: d.wind_speed, pres: d.pressure, co2: d.co2, pm25: d.pm25 };
+  Object.keys(map).forEach(key => {
+    const arr = sensorHistory[key];
+    arr.push({ t: d.timestamp, v: map[key] });
+    if(arr.length > 30) arr.shift();
+  });
+  if(currentFocusKey && focusChart) {
+    const hist = sensorHistory[currentFocusKey];
+    focusChart.data.labels = hist.map(h => h.t);
+    focusChart.data.datasets[0].data = hist.map(h => h.v);
+    focusChart.update('none');
+    document.getElementById('focus-chart-empty')?.classList.toggle('show', hist.length === 0);
+    renderFocusValue();
+  }
+}
+
+// ── COMMAND PALETTE ──
+function pulseHighlight(el) {
+  if(!el) return;
+  el.classList.remove('pulse-highlight');
+  void el.offsetWidth; // restart animation
+  el.classList.add('pulse-highlight');
+  setTimeout(() => el.classList.remove('pulse-highlight'), 1000);
+}
+
+const CMD_ACTIONS = [
+  { id:'theme',   icon:'🌗', label:'Toggle Dark / Light mode', hint:'D',
+    run: () => { closeCmdk(); toggleTheme(); } },
+  { id:'alerts',  icon:'⚠️', label:'View alert history', hint:'',
+    run: () => { closeCmdk(); const el = document.querySelector('.alerts-card'); el?.scrollIntoView({behavior:'smooth', block:'center'}); pulseHighlight(el); } },
+  { id:'refresh', icon:'🔄', label:'Refresh data', hint:'R',
+    run: () => { closeCmdk(); fetchData(); } },
+  { id:'grid',    icon:'⊞',  label:'Switch to Grid view', hint:'',
+    run: () => { closeCmdk(); setView('grid'); } },
+  { id:'list',    icon:'☰',  label:'Switch to List view', hint:'',
+    run: () => { closeCmdk(); setView('list'); } },
+];
+
+function getCmdkSensorItems() {
+  return Object.keys(SENSORS).map(key => ({
+    id: 'sensor-' + key, icon: UI_META[key].icon, label: UI_META[key].name, hint: 'Sensor',
+    run: () => {
+      closeCmdk();
+      const view = localStorage.getItem('em_view') || 'grid';
+      const target = document.getElementById(view === 'list' ? `lr-${key}` : `card-${key}`);
+      if(target) { target.scrollIntoView({behavior:'smooth', block:'center'}); pulseHighlight(target); }
+    }
+  }));
+}
+
+let cmdkItems = [];
+let cmdkActiveIndex = 0;
+
+function openCmdk() {
+  document.getElementById('cmdk-overlay').classList.add('open');
+  const input = document.getElementById('cmdk-input');
+  input.value = '';
+  renderCmdkResults('');
+  setTimeout(() => input.focus(), 50);
+}
+function closeCmdk() {
+  document.getElementById('cmdk-overlay').classList.remove('open');
+}
+
+function cmdkItemHtml(item) {
+  return `<div class="cmdk-item"><span class="cmdk-item-icon">${item.icon}</span><span class="cmdk-item-label">${item.label}</span>${item.hint ? `<span class="cmdk-item-hint">${item.hint}</span>` : ''}</div>`;
+}
+
+function updateCmdkActive() {
+  const els = document.querySelectorAll('#cmdk-results .cmdk-item');
+  els.forEach((el, idx) => el.classList.toggle('active', idx === cmdkActiveIndex));
+  els[cmdkActiveIndex]?.scrollIntoView({block:'nearest'});
+}
+
+function renderCmdkResults(query) {
+  const q = query.trim().toLowerCase();
+  const sensors = getCmdkSensorItems().filter(i => !q || i.label.toLowerCase().includes(q));
+  const actions = CMD_ACTIONS.filter(i => !q || i.label.toLowerCase().includes(q));
+  cmdkItems = [...sensors, ...actions];
+  cmdkActiveIndex = 0;
+
+  const results = document.getElementById('cmdk-results');
+  if(cmdkItems.length === 0) {
+    results.innerHTML = '<div class="cmdk-empty">No results found</div>';
+    return;
+  }
+  let html = '';
+  if(sensors.length) html += '<div class="cmdk-group-label">SENSORS</div>' + sensors.map(cmdkItemHtml).join('');
+  if(actions.length)  html += '<div class="cmdk-group-label">ACTIONS</div>' + actions.map(cmdkItemHtml).join('');
+  results.innerHTML = html;
+  updateCmdkActive();
+  results.querySelectorAll('.cmdk-item').forEach((el, idx) => {
+    el.addEventListener('click', () => cmdkItems[idx].run());
+    el.addEventListener('mouseenter', () => { cmdkActiveIndex = idx; updateCmdkActive(); });
+  });
+}
+
+document.getElementById('cmdk-input').addEventListener('input', e => renderCmdkResults(e.target.value));
+document.getElementById('cmdk-input').addEventListener('keydown', e => {
+  if(e.key === 'ArrowDown') { e.preventDefault(); cmdkActiveIndex = Math.min(cmdkActiveIndex + 1, cmdkItems.length - 1); updateCmdkActive(); }
+  else if(e.key === 'ArrowUp') { e.preventDefault(); cmdkActiveIndex = Math.max(cmdkActiveIndex - 1, 0); updateCmdkActive(); }
+  else if(e.key === 'Enter') { e.preventDefault(); cmdkItems[cmdkActiveIndex]?.run(); }
+});
+
+document.getElementById('cmdk-trigger')?.addEventListener('click', openCmdk);
+
+document.addEventListener('keydown', e => {
+  const isMac = navigator.platform.toUpperCase().includes('MAC');
+  if((isMac ? e.metaKey : e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    document.getElementById('cmdk-overlay').classList.contains('open') ? closeCmdk() : openCmdk();
+  }
+  if(e.key === 'Escape' && document.getElementById('cmdk-overlay').classList.contains('open')) closeCmdk();
+});
+
+// ── KEYBOARD SHORTCUTS (D / R) + HINT PANEL ──
+function isTypingTarget(el) {
+  const tag = (el.tagName || '').toLowerCase();
+  return tag === 'input' || tag === 'textarea' || el.isContentEditable;
+}
+
+document.addEventListener('keydown', e => {
+  if(e.ctrlKey || e.metaKey || e.altKey || isTypingTarget(e.target)) return;
+  if(e.key.toLowerCase() === 'd') { e.preventDefault(); toggleTheme(); }
+  else if(e.key.toLowerCase() === 'r') { e.preventDefault(); fetchData(); }
+});
+
+function toggleShortcutsPanel() {
+  document.getElementById('shortcuts-panel').classList.toggle('open');
+}
+function closeShortcutsPanel() {
+  document.getElementById('shortcuts-panel').classList.remove('open');
+}
+document.getElementById('shortcuts-trigger')?.addEventListener('click', e => {
+  e.stopPropagation();
+  toggleShortcutsPanel();
+});
+document.addEventListener('click', e => {
+  const panel = document.getElementById('shortcuts-panel');
+  const trigger = document.getElementById('shortcuts-trigger');
+  if(panel && panel.classList.contains('open') && !panel.contains(e.target) && e.target !== trigger) closeShortcutsPanel();
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeShortcutsPanel();
+});
 
 // ── STATS ──
 let readings = 0;
@@ -63,11 +350,25 @@ function setGauge(key, value) {
 
   const warn = cfg.warn !== null && value > cfg.warn;
   if(badge) {
-    badge.textContent = warn ? '⚠ Alto' : '✓ Normal';
+    badge.textContent = warn ? '⚠ High' : '✓ Normal';
     badge.className = 'gc-badge ' + (warn ? 'warn' : 'ok');
   }
   if(card) card.classList.toggle('warn', warn);
+
+  lastValues[key] = value;
+  updateListRow(key, value, warn);
   return warn;
+}
+
+function updateListRow(key, value, warn) {
+  const meta = UI_META[key];
+  const lrv = document.getElementById(`lrv-${key}`);
+  const lrb = document.getElementById(`lrb-${key}`);
+  if(lrv) lrv.textContent = `${value} ${meta.unit}`;
+  if(lrb) {
+    lrb.textContent = warn ? '⚠ High' : '✓ Normal';
+    lrb.className = 'lr-badge ' + (warn ? 'warn' : 'ok');
+  }
 }
 
 // ── BAR ──
@@ -85,10 +386,13 @@ function setBar(key, value) {
 
   const warn = cfg.warn !== null && value > cfg.warn;
   if(badge) {
-    badge.textContent = warn ? '⚠ Cao' : '✓ Bình thường';
+    badge.textContent = warn ? '⚠ High' : '✓ Normal';
     badge.className = 'gc-badge ' + (warn ? 'warn' : 'ok');
   }
   if(card) card.classList.toggle('warn', warn);
+
+  lastValues[key] = value;
+  updateListRow(key, value, warn);
   return warn;
 }
 
@@ -107,9 +411,9 @@ const chart = new Chart(chartCtx, {
   data: {
     labels: [],
     datasets: [
-      { label:'Nhiệt độ (°C)', data:[], yAxisID:'y1', borderColor:'#ff6b35', backgroundColor:makeGrad(chartCtx,'#ff6b35'), borderWidth:2, fill:true, tension:.4, pointRadius:2 },
-      { label:'Độ ẩm (%)',     data:[], yAxisID:'y1', borderColor:'#00b4d8', backgroundColor:makeGrad(chartCtx,'#00b4d8'), borderWidth:2, fill:false,tension:.4, pointRadius:2 },
-      { label:'Gió (m/s)',     data:[], yAxisID:'y2', borderColor:'#06d6a0', backgroundColor:makeGrad(chartCtx,'#06d6a0'), borderWidth:2, fill:false,tension:.4, pointRadius:2 },
+      { label:'Temperature (°C)', data:[], yAxisID:'y1', borderColor:'#ff6b35', backgroundColor:makeGrad(chartCtx,'#ff6b35'), borderWidth:2, fill:true, tension:.4, pointRadius:2 },
+      { label:'Humidity (%)',     data:[], yAxisID:'y1', borderColor:'#00b4d8', backgroundColor:makeGrad(chartCtx,'#00b4d8'), borderWidth:2, fill:false,tension:.4, pointRadius:2 },
+      { label:'Wind (m/s)',       data:[], yAxisID:'y2', borderColor:'#06d6a0', backgroundColor:makeGrad(chartCtx,'#06d6a0'), borderWidth:2, fill:false,tension:.4, pointRadius:2 },
     ]
   },
   options: {
@@ -137,13 +441,19 @@ function addChartPoint(d) {
   chart.data.datasets[1].data.push(d.humidity);
   chart.data.datasets[2].data.push(d.wind_speed);
   chart.update('none');
+  updateChartEmptyState();
 }
+
+function updateChartEmptyState() {
+  document.getElementById('chart-empty')?.classList.toggle('show', chart.data.labels.length === 0);
+}
+updateChartEmptyState();
 
 // ── ALERTS LOG ──
 const alertsLog = [];
 
 function addAlert(msg) {
-  const now = new Date().toLocaleTimeString('vi-VN');
+  const now = new Date().toLocaleTimeString('en-US');
   alertsLog.unshift({ msg, time: now });
   if(alertsLog.length > 20) alertsLog.pop();
 
@@ -165,7 +475,7 @@ function renderAlerts() {
   const list = document.getElementById('alerts-list');
   if(!list) return;
   if(alertsLog.length === 0) {
-    list.innerHTML = '<div class="no-alerts">✅ Không có cảnh báo</div>';
+    list.innerHTML = '<div class="no-alerts">✅ No alerts</div>';
     return;
   }
   list.innerHTML = alertsLog.slice(0,10).map(a => `
@@ -188,6 +498,25 @@ function showToast(msg) {
   toastTimer = setTimeout(() => { t.style.display = 'none'; }, 4000);
 }
 
+// ── CONNECTION ERROR STATE ──
+let consecutiveFailures = 0;
+
+function showConnectionError() {
+  document.getElementById('content-error')?.classList.add('show');
+}
+function hideConnectionError() {
+  document.getElementById('content-error')?.classList.remove('show');
+}
+
+document.getElementById('ce-retry')?.addEventListener('click', async () => {
+  const btn = document.getElementById('ce-retry');
+  btn.disabled = true;
+  btn.textContent = '🔄 Retrying...';
+  await fetchData();
+  btn.disabled = false;
+  btn.textContent = '🔄 Retry';
+});
+
 // ── MAIN UPDATE ──
 const prevAlerts = {};
 
@@ -195,6 +524,9 @@ async function fetchData() {
   try {
     const res  = await fetch('/data/latest');
     const d    = await res.json();
+    document.body.classList.remove('is-loading');
+    consecutiveFailures = 0;
+    hideConnectionError();
 
     // Time / date
     const tsEl   = document.getElementById('time-display');
@@ -204,7 +536,7 @@ async function fetchData() {
 
     // Connection status
     const conn = document.getElementById('conn-status');
-    if(conn) { conn.classList.add('online'); conn.querySelector('span').style.display = 'inline-block'; conn.innerHTML = '<span class="conn-dot"></span>Đã kết nối'; }
+    if(conn) { conn.classList.add('online'); conn.querySelector('span').style.display = 'inline-block'; conn.innerHTML = '<span class="conn-dot"></span>Connected'; }
 
     // Readings counter
     readings++;
@@ -221,11 +553,11 @@ async function fetchData() {
 
     // Alert log (only on new warnings)
     const warns = [
-      [wTemp, `Nhiệt độ cao: ${d.temperature}°C`],
-      [wHum,  `Độ ẩm cao: ${d.humidity}%`],
-      [wWind, `Gió mạnh: ${d.wind_speed} m/s`],
-      [wCo2,  `CO₂ cao: ${d.co2} ppm`],
-      [wPm,   `PM2.5 cao: ${d.pm25} μg/m³`],
+      [wTemp, `High temperature: ${d.temperature}°C`],
+      [wHum,  `High humidity: ${d.humidity}%`],
+      [wWind, `Strong wind: ${d.wind_speed} m/s`],
+      [wCo2,  `High CO₂: ${d.co2} ppm`],
+      [wPm,   `High PM2.5: ${d.pm25} μg/m³`],
     ];
     warns.forEach(([isWarn, msg]) => {
       const key = msg.split(':')[0];
@@ -240,12 +572,18 @@ async function fetchData() {
 
     // Chart
     addChartPoint(d);
+    pushHistory(d);
 
   } catch(e) {
+    document.body.classList.remove('is-loading');
     const conn = document.getElementById('conn-status');
-    if(conn) { conn.classList.remove('online'); conn.innerHTML = '<span class="conn-dot"></span>Mất kết nối'; }
+    if(conn) { conn.classList.remove('online'); conn.innerHTML = '<span class="conn-dot"></span>Disconnected'; }
+    consecutiveFailures++;
+    if(consecutiveFailures >= 2) showConnectionError();
   }
 }
 
 fetchData();
 setInterval(fetchData, 2000);
+
+applyTheme(localStorage.getItem('em_theme') || 'dark');

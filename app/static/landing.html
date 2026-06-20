@@ -1,70 +1,79 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>EnvMonitor — Hệ thống giám sát môi trường IoT</title>
+<title>EnvMonitor — IoT Environmental Monitoring System</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--p:#6366f1;--s:#00d4ff;--bg:#030712;--card:#0d1117;--b:#1f2937;--t:#f1f5f9;--m:#64748b;--grad:linear-gradient(135deg,#6366f1,#00d4ff)}
+:root{--p:#6366f1;--s:#00d4ff;--bg:#ffffff;--card:#ffffff;--b:#e7eaf2;--t:#12141f;--m:#64748b;--grad:linear-gradient(135deg,#6366f1,#00d4ff)}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);overflow-x:hidden}
 a{text-decoration:none}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(3,7,18,.85);backdrop-filter:blur(14px);border-bottom:1px solid #ffffff08}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--b)}
 .logo{font-size:1.1rem;font-weight:900;letter-spacing:1.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .nav-r{display:flex;align-items:center;gap:28px}
 .nav-r a{color:var(--m);font-size:.88rem;font-weight:500;transition:color .2s}
 .nav-r a:hover{color:var(--t)}
 .btn{display:inline-flex;align-items:center;gap:7px;background:var(--grad);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-size:.88rem;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s}
-.btn:hover{opacity:.85}.btn:active{transform:scale(.97)}
-.btn-out{background:transparent;color:var(--t);border:1px solid var(--b);border-radius:10px;padding:9px 20px;font-size:.88rem;font-weight:500;transition:border-color .2s,background .2s}
-.btn-out:hover{border-color:var(--p);background:#6366f112}
+.btn:hover{opacity:.88}.btn:active{transform:scale(.97)}
+.btn-out{display:inline-flex;align-items:center;gap:7px;background:transparent;color:var(--t);border:1px solid var(--b);border-radius:10px;padding:9px 20px;font-size:.88rem;font-weight:500;transition:border-color .2s,background .2s}
+.btn-out:hover{border-color:var(--p);background:#6366f10c}
 
 /* HERO */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 24px 80px;position:relative;overflow:hidden;text-align:center}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,#6366f125,transparent 65%),radial-gradient(ellipse 50% 40% at 80% 80%,#00d4ff12,transparent 55%),radial-gradient(ellipse 40% 50% at 10% 70%,#8b5cf612,transparent 55%)}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(99,102,241,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.04) 1px,transparent 1px);background-size:64px 64px}
-.hero-inner{position:relative;z-index:1;max-width:860px;width:100%}
-.badge{display:inline-flex;align-items:center;gap:8px;background:#6366f115;border:1px solid #6366f132;color:#a5b4fc;border-radius:20px;padding:5px 15px;font-size:.8rem;font-weight:500;margin-bottom:28px}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:130px 24px 80px;position:relative;overflow:hidden;text-align:center}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,#6366f114,transparent 65%),radial-gradient(ellipse 50% 40% at 80% 80%,#00d4ff0c,transparent 55%),radial-gradient(ellipse 40% 50% at 10% 70%,#8b5cf60c,transparent 55%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(99,102,241,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.05) 1px,transparent 1px);background-size:64px 64px}
+.hero-inner{position:relative;z-index:1;max-width:900px;width:100%}
+.badge{display:inline-flex;align-items:center;gap:8px;background:#6366f112;border:1px solid #6366f130;color:#4f46e5;border-radius:20px;padding:5px 15px;font-size:.8rem;font-weight:600;margin-bottom:28px}
 .bdot{width:6px;height:6px;border-radius:50%;background:#6366f1;animation:p 1.5s ease-in-out infinite}
 @keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
-.hero h1{font-size:clamp(2.2rem,5.5vw,4rem);font-weight:900;line-height:1.12;margin-bottom:20px;letter-spacing:-.5px}
+.hero h1{font-size:clamp(2.2rem,5.5vw,4rem);font-weight:900;line-height:1.12;margin-bottom:20px;letter-spacing:-.5px;color:var(--t)}
 .hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero p{font-size:1.05rem;color:var(--m);line-height:1.75;margin-bottom:36px;max-width:580px;margin-left:auto;margin-right:auto}
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:64px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:80px}
 
-/* MOCKUP */
-.mockup{background:var(--card);border:1px solid var(--b);border-radius:18px;overflow:hidden;box-shadow:0 0 80px #6366f118,0 40px 80px #00000060;max-width:880px;margin:0 auto}
-.mock-bar{display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid var(--b);background:#0a0f1a}
-.d{width:12px;height:12px;border-radius:50%}
-.mock-title{font-size:.78rem;color:var(--m);margin-left:8px;font-weight:500}
-.mock-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b)}
-.mc{background:#0d1117;padding:18px;text-align:center}
-.mc .v{font-size:1.7rem;font-weight:800;font-family:monospace}
-.mc .l{font-size:.72rem;color:var(--m);margin-top:4px;letter-spacing:.5px}
-.mock-bottom{padding:14px 18px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--b);background:#0a0f1a}
-.live-tag{display:flex;align-items:center;gap:6px;background:#00ff4415;border:1px solid #00ff4430;color:#00ff44;border-radius:20px;padding:3px 12px;font-size:.72rem;font-weight:700}
-.ldot{width:5px;height:5px;border-radius:50%;background:#00ff44;animation:p 1.2s ease-in-out infinite}
-.mock-ts{font-size:.8rem;color:var(--m);margin-left:auto}
+/* FLOATING CARDS */
+.float-stage{position:relative;max-width:880px;margin:0 auto;height:330px}
+.float-card{position:absolute;background:#fff;border:1px solid var(--b);border-radius:16px;padding:18px 20px;box-shadow:0 20px 45px -12px #0f172920,0 4px 12px #0f172910;transition:transform .3s cubic-bezier(.4,0,.2,1);text-align:left}
+.float-card:hover{transform:translateY(-5px) rotate(0deg) scale(1.03)}
+.fc-1{top:6px;left:4%;width:150px;transform:rotate(-6deg)}
+.fc-2{top:36px;left:50%;transform:translateX(-50%) rotate(1deg);width:260px;z-index:2;box-shadow:0 28px 55px -12px #0f172928,0 6px 16px #0f172914}
+.fc-3{top:0;right:4%;width:150px;transform:rotate(5deg)}
+.fc-4{bottom:0;left:20%;width:210px;transform:rotate(-3deg)}
+.fcard-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:10px}
+.fcard-label{font-size:.7rem;color:var(--m);font-weight:600;letter-spacing:.3px;margin-bottom:4px}
+.fcard-value{font-size:1.55rem;font-weight:800;color:var(--t)}
+.fcard-value.sm{font-size:1.25rem}
+.fcard-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.fcard-ts{font-size:.78rem;color:var(--m)}
+.fcard-list{display:flex;flex-direction:column;gap:9px}
+.fcl-item{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--t)}
+.fcl-item span{color:var(--m);font-weight:500}
+.fcl-item b{font-weight:700}
+.fcard-dots{display:flex;gap:6px;margin-top:8px}
+.fcard-dots span{width:16px;height:16px;border-radius:5px;display:inline-block}
+.live-tag{display:flex;align-items:center;gap:6px;background:#00c85115;border:1px solid #00c85130;color:#0a9a3f;border-radius:20px;padding:3px 12px;font-size:.72rem;font-weight:700}
+.ldot{width:5px;height:5px;border-radius:50%;background:#0a9a3f;animation:p 1.2s ease-in-out infinite}
 
 /* SECTIONS */
 .section{padding:100px 24px}
 .container{max-width:1100px;margin:0 auto}
-.stag{display:inline-flex;align-items:center;gap:8px;background:#6366f115;border:1px solid #6366f130;color:#a5b4fc;border-radius:20px;padding:5px 14px;font-size:.78rem;font-weight:500;margin-bottom:14px}
-.sh{font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:800;margin-bottom:12px;line-height:1.2}
+.stag{display:inline-flex;align-items:center;gap:8px;background:#6366f112;border:1px solid #6366f130;color:#4f46e5;border-radius:20px;padding:5px 14px;font-size:.78rem;font-weight:600;margin-bottom:14px}
+.sh{font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:800;margin-bottom:12px;line-height:1.2;color:var(--t)}
 .sp{color:var(--m);font-size:.95rem;line-height:1.75;max-width:540px;margin-bottom:52px}
 
 /* FEATURES */
 .fg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.fc{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:28px;transition:border-color .3s,transform .25s}
-.fc:hover{border-color:#6366f145;transform:translateY(-5px)}
+.fc{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:28px;transition:border-color .3s,transform .25s,box-shadow .3s;box-shadow:0 1px 2px #0f172906}
+.fc:hover{border-color:#6366f145;transform:translateY(-5px);box-shadow:0 16px 32px -10px #0f172916}
 .fi{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:16px}
-.fc h3{font-size:1rem;font-weight:700;margin-bottom:9px}
+.fc h3{font-size:1rem;font-weight:700;margin-bottom:9px;color:var(--t)}
 .fc p{font-size:.86rem;color:var(--m);line-height:1.65}
 
 /* STATS */
-.ss{background:#07090f;border-top:1px solid var(--b);border-bottom:1px solid var(--b)}
+.ss{background:#f7f8fc;border-top:1px solid var(--b);border-bottom:1px solid var(--b)}
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b);border:1px solid var(--b);border-radius:20px;overflow:hidden}
 .si{background:var(--card);padding:40px 20px;text-align:center}
 .sn{font-size:2.8rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -74,19 +83,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .hg{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;position:relative}
 .hg::before{content:'';position:absolute;top:32px;left:calc(16.67% + 24px);right:calc(16.67% + 24px);height:1px;background:linear-gradient(90deg,var(--p),var(--s))}
 .hs{text-align:center}
-.hn{width:64px;height:64px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;margin:0 auto 22px;position:relative;z-index:1;box-shadow:0 0 20px #6366f140}
-.hs h3{font-size:1rem;font-weight:700;margin-bottom:9px}
+.hn{width:64px;height:64px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;margin:0 auto 22px;position:relative;z-index:1;box-shadow:0 10px 24px -6px #6366f150;color:#fff}
+.hs h3{font-size:1rem;font-weight:700;margin-bottom:9px;color:var(--t)}
 .hs p{font-size:.86rem;color:var(--m);line-height:1.65}
 
 /* CTA */
-.cta-box{background:linear-gradient(135deg,#6366f118,#00d4ff10);border:1px solid #6366f130;border-radius:24px;padding:72px 40px;text-align:center}
-.cta-box h2{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:800;margin-bottom:14px}
+.cta-box{background:linear-gradient(135deg,#6366f110,#00d4ff0c);border:1px solid #6366f124;border-radius:24px;padding:72px 40px;text-align:center}
+.cta-box h2{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:800;margin-bottom:14px;color:var(--t)}
 .cta-box p{color:var(--m);font-size:.95rem;margin-bottom:32px}
 
 /* FOOTER */
 footer{padding:32px 48px;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 .fl{font-weight:800;font-size:.95rem;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 footer p{font-size:.8rem;color:var(--m)}
+footer p.fmuted{opacity:.7}
 
 .fi-in{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
 .fi-in.vis{opacity:1;transform:translateY(0)}
@@ -95,7 +105,9 @@ footer p{font-size:.8rem;color:var(--m)}
   nav{padding:14px 20px}.nav-r a:not(.btn){display:none}
   .fg{grid-template-columns:1fr}.sg{grid-template-columns:repeat(2,1fr)}
   .hg{grid-template-columns:1fr;gap:32px}.hg::before{display:none}
-  .mock-grid{grid-template-columns:repeat(2,1fr)}
+  .float-stage{height:auto;display:flex;flex-direction:column;gap:14px;max-width:320px}
+  .float-card{position:static;transform:none!important;width:100%!important}
+  .float-card:hover{transform:none!important}
 }
 </style>
 </head>
@@ -104,9 +116,9 @@ footer p{font-size:.8rem;color:var(--m)}
 <nav>
   <div class="logo">◈ ENVMONITOR</div>
   <div class="nav-r">
-    <a href="#features">Tính năng</a>
-    <a href="#how">Hoạt động</a>
-    <a href="/login" class="btn">Đăng nhập →</a>
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="/login" class="btn">Login →</a>
   </div>
 </nav>
 
@@ -114,33 +126,51 @@ footer p{font-size:.8rem;color:var(--m)}
 <div class="hero">
   <div class="hero-bg"></div><div class="hero-grid"></div>
   <div class="hero-inner">
-    <div class="badge"><span class="bdot"></span>Hệ thống IoT Real-time</div>
-    <h1>Giám sát môi trường<br/><span>thông minh & chính xác</span></h1>
-    <p>Theo dõi nhiệt độ, độ ẩm, chất lượng không khí và nhiều thông số môi trường theo thời gian thực. Xây dựng với ESP32 + FastAPI.</p>
+    <div class="badge"><span class="bdot"></span>Real-time IoT System</div>
+    <h1>Environmental monitoring,<br/><span>smart & precise</span></h1>
+    <p>Track temperature, humidity, air quality and more environmental metrics in real time. Built with ESP32 + FastAPI.</p>
     <div class="hero-btns">
-      <a href="/login" class="btn">🚀 Vào Dashboard</a>
-      <a href="#features" class="btn-out">Tìm hiểu thêm</a>
+      <a href="/login" class="btn">🚀 Go to Dashboard</a>
+      <a href="#features" class="btn-out">▶ Learn more</a>
     </div>
 
-    <!-- Live mockup -->
-    <div class="mockup">
-      <div class="mock-bar">
-        <div class="d" style="background:#ff5f57"></div>
-        <div class="d" style="background:#febc2e"></div>
-        <div class="d" style="background:#28c840"></div>
-        <span class="mock-title">EnvMonitor Dashboard — Sensor Node 01</span>
+    <!-- Floating live-data cards -->
+    <div class="float-stage">
+      <div class="float-card fc-1">
+        <div class="fcard-icon" style="background:#ff6b3520;color:#ff6b35">🌡️</div>
+        <div class="fcard-label">Temperature</div>
+        <div class="fcard-value" id="p-temp">--°C</div>
       </div>
-      <div class="mock-grid">
-        <div class="mc"><div class="v" style="color:#ff6b35" id="p-temp">--°C</div><div class="l">NHIỆT ĐỘ</div></div>
-        <div class="mc"><div class="v" style="color:#00b4d8" id="p-hum">--%</div><div class="l">ĐỘ ẨM</div></div>
-        <div class="mc"><div class="v" style="color:#06d6a0" id="p-wind">-- m/s</div><div class="l">TỐC ĐỘ GIÓ</div></div>
-        <div class="mc"><div class="v" style="color:#8338ec" id="p-pres">-- hPa</div><div class="l">ÁP SUẤT</div></div>
-        <div class="mc"><div class="v" style="color:#ffb700" id="p-co2">-- ppm</div><div class="l">CO₂</div></div>
-        <div class="mc"><div class="v" style="color:#ff006e" id="p-pm25">-- μg/m³</div><div class="l">BỤI PM2.5</div></div>
+
+      <div class="float-card fc-2">
+        <div class="fcard-row">
+          <span class="live-tag"><span class="ldot"></span>LIVE</span>
+          <span class="fcard-ts" id="p-ts">--:--:--</span>
+        </div>
+        <div class="fcard-list">
+          <div class="fcl-item"><span>💧 Humidity</span><b id="p-hum">--%</b></div>
+          <div class="fcl-item"><span>🌬️ Wind</span><b id="p-wind">-- m/s</b></div>
+          <div class="fcl-item"><span>🫁 CO₂</span><b id="p-co2">-- ppm</b></div>
+          <div class="fcl-item"><span>💨 PM2.5</span><b id="p-pm25">-- μg/m³</b></div>
+        </div>
       </div>
-      <div class="mock-bottom">
-        <div class="live-tag"><span class="ldot"></span>LIVE</div>
-        <span class="mock-ts" id="p-ts">--:--:--</span>
+
+      <div class="float-card fc-3">
+        <div class="fcard-icon" style="background:#8338ec20;color:#8338ec">🌐</div>
+        <div class="fcard-label">Pressure</div>
+        <div class="fcard-value sm" id="p-pres">-- hPa</div>
+      </div>
+
+      <div class="float-card fc-4">
+        <div class="fcard-label">6 sensors active</div>
+        <div class="fcard-dots">
+          <span style="background:#ff6b35"></span>
+          <span style="background:#00b4d8"></span>
+          <span style="background:#06d6a0"></span>
+          <span style="background:#8338ec"></span>
+          <span style="background:#ffb700"></span>
+          <span style="background:#ff006e"></span>
+        </div>
       </div>
     </div>
   </div>
@@ -149,16 +179,16 @@ footer p{font-size:.8rem;color:var(--m)}
 <!-- FEATURES -->
 <div class="section" id="features">
   <div class="container">
-    <div class="stag">✦ Tính năng</div>
-    <h2 class="sh fi-in">Đầy đủ tính năng<br/>cho mọi nhu cầu</h2>
-    <p class="sp fi-in">Từ giám sát cơ bản đến cảnh báo thông minh, hệ thống cung cấp mọi thứ bạn cần để theo dõi môi trường.</p>
+    <div class="stag">✦ Features</div>
+    <h2 class="sh fi-in">Full features<br/>for every need</h2>
+    <p class="sp fi-in">From basic monitoring to smart alerts, the system gives you everything you need to track your environment.</p>
     <div class="fg">
-      <div class="fc fi-in"><div class="fi" style="background:#6366f120">🌡️</div><h3>6 Loại cảm biến</h3><p>Nhiệt độ, độ ẩm, tốc độ gió, áp suất khí quyển, nồng độ CO₂ và bụi PM2.5.</p></div>
-      <div class="fc fi-in"><div class="fi" style="background:#00d4ff18">⚡</div><h3>Cập nhật real-time</h3><p>Dữ liệu cập nhật mỗi 2 giây từ ESP32 qua HTTP. Không cần refresh trang thủ công.</p></div>
-      <div class="fc fi-in"><div class="fi" style="background:#ff6b3520">⚠️</div><h3>Cảnh báo thông minh</h3><p>Tự động phát hiện và cảnh báo khi thông số vượt ngưỡng an toàn đã cài đặt.</p></div>
-      <div class="fc fi-in"><div class="fi" style="background:#06d6a018">📊</div><h3>Biểu đồ lịch sử</h3><p>Theo dõi xu hướng thay đổi theo thời gian với biểu đồ đường tương tác trực quan.</p></div>
-      <div class="fc fi-in"><div class="fi" style="background:#8338ec18">📱</div><h3>Responsive</h3><p>Giao diện tương thích với mọi thiết bị — máy tính, tablet và điện thoại di động.</p></div>
-      <div class="fc fi-in"><div class="fi" style="background:#ffb70018">🔌</div><h3>Open API</h3><p>ESP32 kết nối dễ dàng qua REST API. Chỉ cần HTTP POST với JSON đơn giản.</p></div>
+      <div class="fc fi-in"><div class="fi" style="background:#6366f120">🌡️</div><h3>6 Sensor Types</h3><p>Temperature, humidity, wind speed, atmospheric pressure, CO₂ concentration and PM2.5 dust.</p></div>
+      <div class="fc fi-in"><div class="fi" style="background:#00d4ff18">⚡</div><h3>Real-time Updates</h3><p>Data updates every 2 seconds from the ESP32 over HTTP. No manual page refresh needed.</p></div>
+      <div class="fc fi-in"><div class="fi" style="background:#ff6b3520">⚠️</div><h3>Smart Alerts</h3><p>Automatically detects and alerts you when readings exceed safe thresholds.</p></div>
+      <div class="fc fi-in"><div class="fi" style="background:#06d6a018">📊</div><h3>Historical Charts</h3><p>Track trends over time with clear, interactive line charts.</p></div>
+      <div class="fc fi-in"><div class="fi" style="background:#8338ec18">📱</div><h3>Responsive</h3><p>A UI that adapts to any device — desktop, tablet and mobile.</p></div>
+      <div class="fc fi-in"><div class="fi" style="background:#ffb70018">🔌</div><h3>Open API</h3><p>ESP32 connects easily via REST API. Just a simple HTTP POST with JSON.</p></div>
     </div>
   </div>
 </div>
@@ -167,10 +197,10 @@ footer p{font-size:.8rem;color:var(--m)}
 <div class="section ss">
   <div class="container">
     <div class="sg">
-      <div class="si fi-in"><div class="sn">6</div><div class="sl">Loại cảm biến</div></div>
-      <div class="si fi-in"><div class="sn">2s</div><div class="sl">Cập nhật dữ liệu</div></div>
-      <div class="si fi-in"><div class="sn">24/7</div><div class="sl">Giám sát liên tục</div></div>
-      <div class="si fi-in"><div class="sn">99%</div><div class="sl">Độ chính xác</div></div>
+      <div class="si fi-in"><div class="sn">6</div><div class="sl">Sensor Types</div></div>
+      <div class="si fi-in"><div class="sn">2s</div><div class="sl">Data Refresh</div></div>
+      <div class="si fi-in"><div class="sn">24/7</div><div class="sl">Continuous Monitoring</div></div>
+      <div class="si fi-in"><div class="sn">99%</div><div class="sl">Accuracy</div></div>
     </div>
   </div>
 </div>
@@ -178,13 +208,13 @@ footer p{font-size:.8rem;color:var(--m)}
 <!-- HOW -->
 <div class="section" id="how">
   <div class="container">
-    <div class="stag">✦ Cách hoạt động</div>
-    <h2 class="sh fi-in">Đơn giản & hiệu quả</h2>
-    <p class="sp fi-in">Chỉ 3 bước để bắt đầu giám sát môi trường của bạn ngay hôm nay.</p>
+    <div class="stag">✦ How it works</div>
+    <h2 class="sh fi-in">Simple & effective</h2>
+    <p class="sp fi-in">Just 3 steps to start monitoring your environment today.</p>
     <div class="hg">
-      <div class="hs fi-in"><div class="hn">1</div><h3>Kết nối cảm biến</h3><p>ESP32 + DHT11 đọc dữ liệu môi trường và gửi lên server mỗi 2 giây qua WiFi.</p></div>
-      <div class="hs fi-in"><div class="hn">2</div><h3>Server xử lý</h3><p>FastAPI backend nhận và lưu trữ dữ liệu, tự động phát hiện bất thường.</p></div>
-      <div class="hs fi-in"><div class="hn">3</div><h3>Dashboard hiển thị</h3><p>Giao diện web cập nhật real-time. Xem bất cứ lúc nào trên trình duyệt.</p></div>
+      <div class="hs fi-in"><div class="hn">1</div><h3>Connect sensors</h3><p>ESP32 + DHT11 reads environmental data and sends it to the server every 2 seconds over WiFi.</p></div>
+      <div class="hs fi-in"><div class="hn">2</div><h3>Server processes data</h3><p>The FastAPI backend receives and stores the data, automatically detecting anomalies.</p></div>
+      <div class="hs fi-in"><div class="hn">3</div><h3>Dashboard displays it</h3><p>The web dashboard updates in real time. View it anytime from your browser.</p></div>
     </div>
   </div>
 </div>
@@ -193,9 +223,9 @@ footer p{font-size:.8rem;color:var(--m)}
 <div class="section">
   <div class="container">
     <div class="cta-box fi-in">
-      <h2>Sẵn sàng bắt đầu?</h2>
-      <p>Đăng nhập để xem dashboard giám sát môi trường real-time ngay bây giờ.</p>
-      <a href="/login" class="btn" style="font-size:1rem;padding:13px 32px">🚀 Vào Dashboard</a>
+      <h2>Ready to get started?</h2>
+      <p>Log in now to view your real-time environmental monitoring dashboard.</p>
+      <a href="/login" class="btn" style="font-size:1rem;padding:13px 32px">🚀 Go to Dashboard</a>
     </div>
   </div>
 </div>
@@ -203,7 +233,7 @@ footer p{font-size:.8rem;color:var(--m)}
 <footer>
   <div class="fl">◈ ENVMONITOR</div>
   <p>IoT Environment Monitoring System — ESP32 + FastAPI + Docker</p>
-  <p style="color:#374151">© 2026 EnvMonitor</p>
+  <p class="fmuted">© 2026 EnvMonitor</p>
 </footer>
 
 <script>
