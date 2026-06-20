@@ -5,7 +5,7 @@
 <title>Dashboard — EnvMonitor</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<link rel="stylesheet" href="/static/dashboard.css?v=4"/>
+<link rel="stylesheet" href="/static/dashboard.css?v=5"/>
 </head>
 <body class="is-loading">
 
@@ -111,7 +111,7 @@
       <div class="gauge-card" id="card-temp" onclick="openFocus('temp')">
         <div class="gc-header"><span class="gc-icon">🌡️</span><div><div class="gc-name">Temperature</div><div class="gc-unit">°C</div></div><div class="gc-badge" id="b-temp">—</div></div>
         <svg viewBox="0 0 120 110" class="gsv"><path d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" style="stroke:var(--track)" stroke-width="10" stroke-linecap="round"/><path id="g-temp" d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" stroke="#ff6b35" stroke-width="10" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="235.6"/><text id="v-temp" x="60" y="64" text-anchor="middle" class="gv">--</text><text x="60" y="80" text-anchor="middle" class="gu">°C</text></svg>
-        <div class="gc-range">15°C <span style="color:#374151">—</span> 45°C</div>
+        <div class="gc-range">0°C <span style="color:#374151">—</span> 50°C</div>
         <div class="skeleton-overlay"></div>
       </div>
 
@@ -122,33 +122,33 @@
         <div class="skeleton-overlay"></div>
       </div>
 
-      <div class="gauge-card" id="card-wind" onclick="openFocus('wind')">
-        <div class="gc-header"><span class="gc-icon">🌬️</span><div><div class="gc-name">Wind Speed</div><div class="gc-unit">m/s</div></div><div class="gc-badge" id="b-wind">—</div></div>
-        <svg viewBox="0 0 120 110" class="gsv"><path d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" style="stroke:var(--track)" stroke-width="10" stroke-linecap="round"/><path id="g-wind" d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" stroke="#06d6a0" stroke-width="10" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="235.6"/><text id="v-wind" x="60" y="64" text-anchor="middle" class="gv">--</text><text x="60" y="80" text-anchor="middle" class="gu">m/s</text></svg>
-        <div class="gc-range">0 <span style="color:#374151">—</span> 30 m/s</div>
+      <div class="gauge-card" id="card-lux" onclick="openFocus('lux')">
+        <div class="gc-header"><span class="gc-icon">☀️</span><div><div class="gc-name">Light</div><div class="gc-unit">lux</div></div><div class="gc-badge" id="b-lux">—</div></div>
+        <svg viewBox="0 0 120 110" class="gsv"><path d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" style="stroke:var(--track)" stroke-width="10" stroke-linecap="round"/><path id="g-lux" d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" stroke="#ffd60a" stroke-width="10" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="235.6"/><text id="v-lux" x="60" y="64" text-anchor="middle" class="gv">--</text><text x="60" y="80" text-anchor="middle" class="gu">lux</text></svg>
+        <div class="gc-range">0 <span style="color:#374151">—</span> 1000 lux</div>
         <div class="skeleton-overlay"></div>
       </div>
 
-      <div class="gauge-card" id="card-pres" onclick="openFocus('pres')">
-        <div class="gc-header"><span class="gc-icon">🌐</span><div><div class="gc-name">Pressure</div><div class="gc-unit">hPa</div></div><div class="gc-badge" id="b-pres">—</div></div>
-        <svg viewBox="0 0 120 110" class="gsv"><path d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" style="stroke:var(--track)" stroke-width="10" stroke-linecap="round"/><path id="g-pres" d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" stroke="#8338ec" stroke-width="10" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="235.6"/><text id="v-pres" x="60" y="64" text-anchor="middle" class="gv" style="font-size:14px">--</text><text x="60" y="80" text-anchor="middle" class="gu">hPa</text></svg>
-        <div class="gc-range">980 <span style="color:#374151">—</span> 1030 hPa</div>
+      <div class="gauge-card" id="card-uv" onclick="openFocus('uv')">
+        <div class="gc-header"><span class="gc-icon">🔆</span><div><div class="gc-name">UV</div><div class="gc-unit">Voltage</div></div><div class="gc-badge" id="b-uv">—</div></div>
+        <svg viewBox="0 0 120 110" class="gsv"><path d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" style="stroke:var(--track)" stroke-width="10" stroke-linecap="round"/><path id="g-uv" d="M 24.6 95.4 A 50 50 0 1 1 95.4 95.4" fill="none" stroke="#ff006e" stroke-width="10" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="235.6"/><text id="v-uv" x="60" y="64" text-anchor="middle" class="gv" style="font-size:14px">--</text><text x="60" y="80" text-anchor="middle" class="gu">V</text></svg>
+        <div class="gc-range">0 <span style="color:#374151">—</span> 3.3 V</div>
         <div class="skeleton-overlay"></div>
       </div>
 
-      <div class="gauge-card bar-type" id="card-co2" onclick="openFocus('co2')">
-        <div class="gc-header"><span class="gc-icon">🫁</span><div><div class="gc-name">CO₂</div><div class="gc-unit">Carbon dioxide</div></div><div class="gc-badge" id="b-co2">—</div></div>
-        <div class="big-val" id="v-co2">-- <span class="big-unit">ppm</span></div>
-        <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" id="bf-co2" style="--c:#ffb700"></div></div></div>
-        <div class="bar-labels"><span>400</span><span style="color:#ff7090">Threshold: 1000</span><span>2000 ppm</span></div>
+      <div class="gauge-card bar-type" id="card-soil" onclick="openFocus('soil')">
+        <div class="gc-header"><span class="gc-icon">🌱</span><div><div class="gc-name">Soil Dryness</div><div class="gc-unit">Analog reading — higher = drier</div></div><div class="gc-badge" id="b-soil">—</div></div>
+        <div class="big-val" id="v-soil">-- <span class="big-unit">raw</span></div>
+        <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" id="bf-soil" style="--c:#8338ec"></div></div></div>
+        <div class="bar-labels"><span>0</span><span style="color:#ff7090">Threshold: 3000</span><span>4095</span></div>
         <div class="skeleton-overlay"></div>
       </div>
 
-      <div class="gauge-card bar-type" id="card-pm25" onclick="openFocus('pm25')">
-        <div class="gc-header"><span class="gc-icon">💨</span><div><div class="gc-name">PM2.5</div><div class="gc-unit">Fine particulate matter</div></div><div class="gc-badge" id="b-pm25">—</div></div>
-        <div class="big-val" id="v-pm25">-- <span class="big-unit">μg/m³</span></div>
-        <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" id="bf-pm25" style="--c:#ff006e"></div></div></div>
-        <div class="bar-labels"><span>0</span><span style="color:#ff7090">Threshold: 75</span><span>150 μg/m³</span></div>
+      <div class="gauge-card bar-type" id="card-rain" onclick="openFocus('rain')">
+        <div class="gc-header"><span class="gc-icon">🌧️</span><div><div class="gc-name">Rain</div><div class="gc-unit">Analog reading</div></div><div class="gc-badge" id="b-rain">—</div></div>
+        <div class="big-val" id="v-rain">-- <span class="big-unit">raw</span></div>
+        <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" id="bf-rain" style="--c:#06d6a0"></div></div></div>
+        <div class="bar-labels"><span>0</span><span>4095</span></div>
         <div class="skeleton-overlay"></div>
       </div>
     </div>
@@ -167,12 +167,12 @@
         <div class="card-header">
           <div>
             <h3 class="card-title">History — Last 30 points</h3>
-            <p class="card-desc">Temperature, humidity and wind speed</p>
+            <p class="card-desc">Temperature, humidity and light</p>
           </div>
           <div class="legend">
             <span class="leg" style="--c:#ff6b35">Temperature</span>
             <span class="leg" style="--c:#00b4d8">Humidity</span>
-            <span class="leg" style="--c:#06d6a0">Wind</span>
+            <span class="leg" style="--c:#ffd60a">Light</span>
           </div>
         </div>
         <div class="chart-wrap">
@@ -251,6 +251,6 @@
 </div>
 
 <script src="/static/shell.js?v=1"></script>
-<script src="/static/dashboard.js?v=3"></script>
+<script src="/static/dashboard.js?v=4"></script>
 </body>
 </html>

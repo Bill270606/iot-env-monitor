@@ -1,10 +1,10 @@
 const SENSOR_INFO = {
-  temp: { icon:'🌡️', name:'Temperature', unit:'°C',    min:15, max:45,   color:'#ff6b35', field:'temperature', desc:'Ambient air temperature measured by the node’s sensor.' },
-  hum:  { icon:'💧',  name:'Humidity',    unit:'%',     min:0,  max:100,  color:'#00b4d8', field:'humidity',    desc:'Relative humidity of the surrounding air.' },
-  wind: { icon:'🌬️', name:'Wind Speed',  unit:'m/s',   min:0,  max:30,   color:'#06d6a0', field:'wind_speed',  desc:'Wind speed measured near the sensor node.' },
-  pres: { icon:'🌐',  name:'Pressure',    unit:'hPa',   min:980,max:1030, color:'#8338ec', field:'pressure',    desc:'Atmospheric pressure at sea-level equivalent.' },
-  co2:  { icon:'🫁',  name:'CO₂',         unit:'ppm',   min:400,max:2000, color:'#ffb700', field:'co2',         desc:'Carbon dioxide concentration — high levels can signal poor ventilation.' },
-  pm25: { icon:'💨',  name:'PM2.5',       unit:'μg/m³', min:0,  max:150,  color:'#ff006e', field:'pm25',        desc:'Fine particulate matter — a key indicator of outdoor air quality.' },
+  temp: { icon:'🌡️', name:'Temperature',  unit:'°C',  min:0, max:50,   color:'#ff6b35', field:'temperature', desc:'Ambient air temperature, read from the DHT22 sensor.' },
+  hum:  { icon:'💧',  name:'Humidity',     unit:'%',   min:0, max:100,  color:'#00b4d8', field:'humidity',    desc:'Relative humidity of the surrounding air, read from the DHT22 sensor.' },
+  lux:  { icon:'☀️',  name:'Light',        unit:'lux', min:0, max:1000, color:'#ffd60a', field:'lux',         desc:'Ambient light level, read from the BH1750 light sensor.' },
+  uv:   { icon:'🔆',  name:'UV',           unit:'V',   min:0, max:3.3,  color:'#ff006e', field:'uvVoltage',   desc:'Raw UV sensor voltage (0–3.3V from the ESP32 ADC).' },
+  soil: { icon:'🌱',  name:'Soil Dryness', unit:'raw', min:0, max:4095, color:'#8338ec', field:'soilAO',      desc:'Analog soil moisture reading — higher value means drier soil.' },
+  rain: { icon:'🌧️', name:'Rain',         unit:'raw', min:0, max:4095, color:'#06d6a0', field:'rainAO',      desc:'Analog rain sensor reading from the rain detector module.' },
 };
 
 function getThreshold(key) {

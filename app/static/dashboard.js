@@ -17,12 +17,12 @@ function updateChartTheme(theme) {
 // ── CONFIG ──
 const ARC = 235.6;
 const SENSORS = {
-  temp: { min:15, max:45,   warn:35,   color:'#ff6b35' },
-  hum:  { min:0,  max:100,  warn:85,   color:'#00b4d8' },
-  wind: { min:0,  max:30,   warn:20,   color:'#06d6a0' },
-  pres: { min:980,max:1030, warn:null, color:'#8338ec' },
-  co2:  { min:400,max:2000, warn:1000, color:'#ffb700', unit:'ppm'   },
-  pm25: { min:0,  max:150,  warn:75,   color:'#ff006e', unit:'μg/m³' },
+  temp: { min:0,   max:50,   warn:35,   color:'#ff6b35' },
+  hum:  { min:0,   max:100,  warn:85,   color:'#00b4d8' },
+  lux:  { min:0,   max:1000, warn:null, color:'#ffd60a' },
+  uv:   { min:0,   max:3.3,  warn:null, color:'#ff006e' },
+  soil: { min:0,   max:4095, warn:3000, color:'#8338ec', unit:'raw' },
+  rain: { min:0,   max:4095, warn:null, color:'#06d6a0', unit:'raw' },
 };
 
 // Apply any custom thresholds saved from the Settings page
@@ -34,16 +34,16 @@ const SENSORS = {
 })();
 
 const UI_META = {
-  temp: { icon:'🌡️', name:'Temperature', unit:'°C'    },
-  hum:  { icon:'💧',  name:'Humidity',    unit:'%'     },
-  wind: { icon:'🌬️', name:'Wind Speed',  unit:'m/s'   },
-  pres: { icon:'🌐',  name:'Pressure',    unit:'hPa'   },
-  co2:  { icon:'🫁',  name:'CO₂',         unit:'ppm'   },
-  pm25: { icon:'💨',  name:'PM2.5',       unit:'μg/m³' },
+  temp: { icon:'🌡️', name:'Temperature', unit:'°C'  },
+  hum:  { icon:'💧',  name:'Humidity',    unit:'%'   },
+  lux:  { icon:'☀️',  name:'Light',       unit:'lux' },
+  uv:   { icon:'🔆',  name:'UV',          unit:'V'   },
+  soil: { icon:'🌱',  name:'Soil Dryness',unit:'raw' },
+  rain: { icon:'🌧️', name:'Rain',        unit:'raw' },
 };
 
 const lastValues = {};
-const sensorHistory = { temp:[], hum:[], wind:[], pres:[], co2:[], pm25:[] };
+const sensorHistory = { temp:[], hum:[], lux:[], uv:[], soil:[], rain:[] };
 let currentFocusKey = null;
 let focusChart = null;
 
@@ -147,7 +147,7 @@ document.addEventListener('keydown', e => {
 });
 
 function pushHistory(d) {
-  const map = { temp: d.temperature, hum: d.humidity, wind: d.wind_speed, pres: d.pressure, co2: d.co2, pm25: d.pm25 };
+  const map = { temp: d.temperature, hum: d.humidity, lux: d.lux, uv: d.uvVoltage, soil: d.soilAO, rain: d.rainAO };
   Object.keys(map).forEach(key => {
     const arr = sensorHistory[key];
     arr.push({ t: d.timestamp, v: map[key] });
@@ -355,7 +355,7 @@ const chart = new Chart(chartCtx, {
     datasets: [
       { label:'Temperature (°C)', data:[], yAxisID:'y1', borderColor:'#ff6b35', backgroundColor:makeGrad(chartCtx,'#ff6b35'), borderWidth:2, fill:true, tension:.4, pointRadius:2 },
       { label:'Humidity (%)',     data:[], yAxisID:'y1', borderColor:'#00b4d8', backgroundColor:makeGrad(chartCtx,'#00b4d8'), borderWidth:2, fill:false,tension:.4, pointRadius:2 },
-      { label:'Wind (m/s)',       data:[], yAxisID:'y2', borderColor:'#06d6a0', backgroundColor:makeGrad(chartCtx,'#06d6a0'), borderWidth:2, fill:false,tension:.4, pointRadius:2 },
+      { label:'Light (lux)',      data:[], yAxisID:'y2', borderColor:'#ffd60a', backgroundColor:makeGrad(chartCtx,'#ffd60a'), borderWidth:2, fill:false,tension:.4, pointRadius:2 },
     ]
   },
   options: {
@@ -364,7 +364,7 @@ const chart = new Chart(chartCtx, {
     scales:{
       x:{grid:{color:'#1a2d4a60'},ticks:{color:'#4a6a8a',maxTicksLimit:8,font:{size:10}},border:{color:'#1a2d4a'}},
       y1:{grid:{color:'#1a2d4a40'},ticks:{color:'#4a6a8a',font:{size:10}},border:{color:'#1a2d4a'}},
-      y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#06d6a0',font:{size:10}},border:{color:'#1a2d4a'}},
+      y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#ffd60a',font:{size:10}},border:{color:'#1a2d4a'}},
     },
     plugins:{
       legend:{display:false},
@@ -381,7 +381,7 @@ function addChartPoint(d) {
   chart.data.labels.push(d.timestamp);
   chart.data.datasets[0].data.push(d.temperature);
   chart.data.datasets[1].data.push(d.humidity);
-  chart.data.datasets[2].data.push(d.wind_speed);
+  chart.data.datasets[2].data.push(d.lux);
   chart.update('none');
   updateChartEmptyState();
 }
@@ -491,20 +491,18 @@ async function fetchData() {
     if(rEl) rEl.textContent = readings;
 
     // Gauges
-    const wTemp = setGauge('temp',  d.temperature);
-    const wHum  = setGauge('hum',   d.humidity);
-    const wWind = setGauge('wind',  d.wind_speed);
-                  setGauge('pres',  d.pressure);
-    const wCo2  = setBar('co2',  d.co2);
-    const wPm   = setBar('pm25', d.pm25);
+    const wTemp = setGauge('temp', d.temperature);
+    const wHum  = setGauge('hum',  d.humidity);
+                  setGauge('lux',  d.lux);
+                  setGauge('uv',   d.uvVoltage);
+    const wSoil = setBar('soil', d.soilAO);
+                  setBar('rain', d.rainAO);
 
     // Alert log (only on new warnings)
     const warns = [
       [wTemp, `High temperature: ${d.temperature}°C`],
       [wHum,  `High humidity: ${d.humidity}%`],
-      [wWind, `Strong wind: ${d.wind_speed} m/s`],
-      [wCo2,  `High CO₂: ${d.co2} ppm`],
-      [wPm,   `High PM2.5: ${d.pm25} μg/m³`],
+      [wSoil, `Soil very dry: ${d.soilAO} raw`],
     ];
     warns.forEach(([isWarn, msg]) => {
       const key = msg.split(':')[0];

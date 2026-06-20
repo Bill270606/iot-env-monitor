@@ -1,12 +1,14 @@
 // ── CONFIG (mirrors dashboard.js, kept independent on purpose) ──
 const SENSOR_DEFAULTS = {
-  temp: { icon:'🌡️', name:'Temperature', unit:'°C',    min:15, max:45,   warn:35 },
-  hum:  { icon:'💧',  name:'Humidity',    unit:'%',     min:0,  max:100,  warn:85 },
-  wind: { icon:'🌬️', name:'Wind Speed',  unit:'m/s',   min:0,  max:30,   warn:20 },
-  co2:  { icon:'🫁',  name:'CO₂',         unit:'ppm',   min:400,max:2000, warn:1000 },
-  pm25: { icon:'💨',  name:'PM2.5',       unit:'μg/m³', min:0,  max:150,  warn:75 },
+  temp: { icon:'🌡️', name:'Temperature', unit:'°C',  min:0, max:50,   warn:35 },
+  hum:  { icon:'💧',  name:'Humidity',    unit:'%',   min:0, max:100,  warn:85 },
+  soil: { icon:'🌱',  name:'Soil Dryness', unit:'raw', min:0, max:4095, warn:3000 },
 };
-const NON_CONFIGURABLE = { pres: { icon:'🌐', name:'Pressure', unit:'hPa', min:980, max:1030 } };
+const NON_CONFIGURABLE = {
+  lux:  { icon:'☀️', name:'Light', unit:'lux', min:0, max:1000 },
+  uv:   { icon:'🔆', name:'UV',    unit:'V',   min:0, max:3.3 },
+  rain: { icon:'🌧️', name:'Rain',  unit:'raw', min:0, max:4095 },
+};
 
 function loadThresholds() {
   return JSON.parse(localStorage.getItem('em_thresholds') || '{}');

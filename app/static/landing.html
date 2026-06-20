@@ -149,16 +149,16 @@ footer p.fmuted{opacity:.7}
         </div>
         <div class="fcard-list">
           <div class="fcl-item"><span>💧 Humidity</span><b id="p-hum">--%</b></div>
-          <div class="fcl-item"><span>🌬️ Wind</span><b id="p-wind">-- m/s</b></div>
-          <div class="fcl-item"><span>🫁 CO₂</span><b id="p-co2">-- ppm</b></div>
-          <div class="fcl-item"><span>💨 PM2.5</span><b id="p-pm25">-- μg/m³</b></div>
+          <div class="fcl-item"><span>☀️ Light</span><b id="p-lux">-- lux</b></div>
+          <div class="fcl-item"><span>🌱 Soil</span><b id="p-soil">-- raw</b></div>
+          <div class="fcl-item"><span>🔆 UV</span><b id="p-uv">-- V</b></div>
         </div>
       </div>
 
       <div class="float-card fc-3">
-        <div class="fcard-icon" style="background:#8338ec20;color:#8338ec">🌐</div>
-        <div class="fcard-label">Pressure</div>
-        <div class="fcard-value sm" id="p-pres">-- hPa</div>
+        <div class="fcard-icon" style="background:#06d6a020;color:#06d6a0">🌧️</div>
+        <div class="fcard-label">Rain</div>
+        <div class="fcard-value sm" id="p-rain">-- raw</div>
       </div>
 
       <div class="float-card fc-4">
@@ -166,9 +166,9 @@ footer p.fmuted{opacity:.7}
         <div class="fcard-dots">
           <span style="background:#ff6b35"></span>
           <span style="background:#00b4d8"></span>
-          <span style="background:#06d6a0"></span>
+          <span style="background:#ffd60a"></span>
           <span style="background:#8338ec"></span>
-          <span style="background:#ffb700"></span>
+          <span style="background:#06d6a0"></span>
           <span style="background:#ff006e"></span>
         </div>
       </div>
@@ -183,7 +183,7 @@ footer p.fmuted{opacity:.7}
     <h2 class="sh fi-in">Full features<br/>for every need</h2>
     <p class="sp fi-in">From basic monitoring to smart alerts, the system gives you everything you need to track your environment.</p>
     <div class="fg">
-      <div class="fc fi-in"><div class="fi" style="background:#6366f120">🌡️</div><h3>6 Sensor Types</h3><p>Temperature, humidity, wind speed, atmospheric pressure, CO₂ concentration and PM2.5 dust.</p></div>
+      <div class="fc fi-in"><div class="fi" style="background:#6366f120">🌡️</div><h3>6 Sensor Types</h3><p>Temperature, humidity, light level, soil moisture, rain and UV exposure.</p></div>
       <div class="fc fi-in"><div class="fi" style="background:#00d4ff18">⚡</div><h3>Real-time Updates</h3><p>Data updates every 2 seconds from the ESP32 over HTTP. No manual page refresh needed.</p></div>
       <div class="fc fi-in"><div class="fi" style="background:#ff6b3520">⚠️</div><h3>Smart Alerts</h3><p>Automatically detects and alerts you when readings exceed safe thresholds.</p></div>
       <div class="fc fi-in"><div class="fi" style="background:#06d6a018">📊</div><h3>Historical Charts</h3><p>Track trends over time with clear, interactive line charts.</p></div>
@@ -247,10 +247,10 @@ async function up() {
     const d = await (await fetch('/data/latest')).json();
     document.getElementById('p-temp').textContent  = d.temperature + '°C';
     document.getElementById('p-hum').textContent   = d.humidity + '%';
-    document.getElementById('p-wind').textContent  = d.wind_speed + ' m/s';
-    document.getElementById('p-pres').textContent  = d.pressure + ' hPa';
-    document.getElementById('p-co2').textContent   = d.co2 + ' ppm';
-    document.getElementById('p-pm25').textContent  = d.pm25 + ' μg/m³';
+    document.getElementById('p-lux').textContent   = d.lux + ' lux';
+    document.getElementById('p-soil').textContent  = d.soilAO + ' raw';
+    document.getElementById('p-uv').textContent    = d.uvVoltage + ' V';
+    document.getElementById('p-rain').textContent  = d.rainAO + ' raw';
     document.getElementById('p-ts').textContent    = d.timestamp;
   } catch(e) {}
 }

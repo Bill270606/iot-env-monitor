@@ -148,8 +148,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);display:
 [id^="g-"]{transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)}
 #g-temp{filter:drop-shadow(0 0 5px #ff6b35)}
 #g-hum {filter:drop-shadow(0 0 5px #00b4d8)}
-#g-wind{filter:drop-shadow(0 0 5px #06d6a0)}
-#g-pres{filter:drop-shadow(0 0 5px #8338ec)}
+#g-lux {filter:drop-shadow(0 0 5px #ffd60a)}
+#g-uv  {filter:drop-shadow(0 0 5px #ff006e)}
 
 .gc-range{font-size:.68rem;color:var(--m);margin-top:6px}
 

@@ -1,9 +1,7 @@
 const ALERT_TYPES = [
   { key:'temp', icon:'🌡️', label:'Temperature', match:'temperature' },
   { key:'hum',  icon:'💧',  label:'Humidity',    match:'humidity' },
-  { key:'wind', icon:'🌬️', label:'Wind',         match:'wind' },
-  { key:'co2',  icon:'🫁',  label:'CO₂',          match:'CO₂' },
-  { key:'pm25', icon:'💨',  label:'PM2.5',        match:'PM2.5' },
+  { key:'soil', icon:'🌱',  label:'Soil',        match:'Soil' },
 ];
 
 function typeOf(msg) {

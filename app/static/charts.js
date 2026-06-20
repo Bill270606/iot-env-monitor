@@ -1,10 +1,10 @@
 const CHART_SENSORS = {
-  temp: { icon:'🌡️', name:'Temperature', unit:'°C',    color:'#ff6b35', field:'temperature' },
-  hum:  { icon:'💧',  name:'Humidity',    unit:'%',     color:'#00b4d8', field:'humidity' },
-  wind: { icon:'🌬️', name:'Wind Speed',  unit:'m/s',   color:'#06d6a0', field:'wind_speed' },
-  pres: { icon:'🌐',  name:'Pressure',    unit:'hPa',   color:'#8338ec', field:'pressure' },
-  co2:  { icon:'🫁',  name:'CO₂',         unit:'ppm',   color:'#ffb700', field:'co2' },
-  pm25: { icon:'💨',  name:'PM2.5',       unit:'μg/m³', color:'#ff006e', field:'pm25' },
+  temp: { icon:'🌡️', name:'Temperature',  unit:'°C',  color:'#ff6b35', field:'temperature' },
+  hum:  { icon:'💧',  name:'Humidity',     unit:'%',   color:'#00b4d8', field:'humidity' },
+  lux:  { icon:'☀️',  name:'Light',        unit:'lux', color:'#ffd60a', field:'lux' },
+  uv:   { icon:'🔆',  name:'UV',           unit:'V',   color:'#ff006e', field:'uvVoltage' },
+  soil: { icon:'🌱',  name:'Soil Dryness', unit:'raw', color:'#8338ec', field:'soilAO' },
+  rain: { icon:'🌧️', name:'Rain',         unit:'raw', color:'#06d6a0', field:'rainAO' },
 };
 
 const charts = {};
