@@ -143,6 +143,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);display:
 @media(max-width:1200px){.farmer-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.farmer-grid{grid-template-columns:1fr}.gs-readouts{gap:20px}}
 
+/* THRESHOLD LEGEND */
+.legend-card{margin-bottom:28px}
+.legend-rows{display:flex;flex-direction:column;gap:10px}
+.legend-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--b)}
+.legend-row:last-child{border-bottom:none}
+.legend-sensor{font-size:.85rem;font-weight:700;min-width:140px}
+.legend-chip{font-size:.74rem;font-weight:600;padding:4px 12px;border-radius:20px;white-space:nowrap}
+.legend-chip.ok{background:#00ff4415;color:#00cc44}
+.legend-chip.warn{background:#ffb70020;color:#ffb700}
+.legend-chip.danger{background:#ff2d5520;color:#ff5575}
+
 /* STAT CARDS */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
 .stat-card{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:18px;display:flex;align-items:center;gap:14px}
