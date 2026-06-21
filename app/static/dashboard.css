@@ -12,6 +12,8 @@
 
 /* Sidebar stays dark navy in both themes (like reference SaaS dashboards) */
 .sidebar{--t:#e2eaf6;--m:#4a6a8a}
+body[data-theme="light"] .sidebar{--sidebar:#16213d;--b:#243352}
+body[data-theme="light"] .sb-user{background:#101a32}
 
 body[data-theme="light"]{
   --bg:#f1f4fa;--card:#ffffff;--b:#e5e9f2;
@@ -57,10 +59,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);display:
   text-decoration:none;transition:all .2s;position:relative;
 }
 .nav-item:hover{background:#ffffff08;color:var(--t)}
-.nav-item.active{background:#6366f118;color:#a5b4fc;border:1px solid #6366f128}
+.nav-item.active{background:var(--grad);color:#fff;border:1px solid transparent;box-shadow:0 6px 16px -4px #6366f160}
 .nav-item.disabled{cursor:not-allowed;opacity:.5}
 .nav-item.disabled:hover{background:none;color:var(--m)}
-.ni{font-size:1rem;width:20px;text-align:center}
+.ni{font-size:1rem;width:20px;text-align:center;filter:grayscale(1);opacity:.8;transition:filter .2s cubic-bezier(.4,0,.2,1),opacity .2s cubic-bezier(.4,0,.2,1)}
+.nav-item:hover .ni{opacity:.95}
+.nav-item.active .ni{filter:none;opacity:1}
 .badge-n{background:#ff2d55;color:#fff;font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto}
 .soon-badge{background:#ffffff10;color:var(--m);font-size:.6rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto;letter-spacing:.3px}
 
