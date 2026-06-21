@@ -12,8 +12,8 @@
 
 /* Sidebar stays dark navy in both themes (like reference SaaS dashboards) */
 .sidebar{--t:#e2eaf6;--m:#4a6a8a}
-body[data-theme="light"] .sidebar{--sidebar:#16213d;--b:#243352}
-body[data-theme="light"] .sb-user{background:#101a32}
+body[data-theme="light"] .sidebar{--sidebar:#2d3a5e;--b:#3a4972;--m:#9fb0d1}
+body[data-theme="light"] .sb-user{background:#212c4a}
 
 body[data-theme="light"]{
   --bg:#f1f4fa;--card:#ffffff;--b:#e5e9f2;
