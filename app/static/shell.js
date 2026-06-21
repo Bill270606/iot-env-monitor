@@ -194,3 +194,126 @@ buildNotifDropdown();
   tag.textContent = 'EnvMonitor v1.1.0';
   nav.parentElement.insertBefore(tag, document.getElementById('sb-user'));
 })();
+
+// ── CHAT WIDGET ──
+(function() {
+  const CHAT_KEY = 'em_chat_history';
+  let chatHistory = JSON.parse(localStorage.getItem(CHAT_KEY) || '[]');
+  let sending = false;
+
+  const trigger = document.createElement('button');
+  trigger.id = 'chat-trigger';
+  trigger.className = 'chat-trigger';
+  trigger.innerHTML = '💬 <span>Ask EnvMonitor</span>';
+  trigger.setAttribute('aria-label', 'Open chat assistant');
+  document.body.appendChild(trigger);
+
+  const panel = document.createElement('div');
+  panel.id = 'chat-panel';
+  panel.className = 'chat-panel';
+  panel.innerHTML = `
+    <div class="chat-head">
+      <div class="chat-head-title">🌱 EnvMonitor Assistant</div>
+      <div class="chat-head-actions">
+        <button class="chat-icon-btn" id="chat-clear-btn" title="Clear chat">🗑</button>
+        <button class="chat-icon-btn" id="chat-close-btn" title="Close" aria-label="Close chat">✕</button>
+      </div>
+    </div>
+    <div class="chat-body" id="chat-body"></div>
+    <form class="chat-input-row" id="chat-form">
+      <input type="text" id="chat-input" placeholder="Ask about your garden..." autocomplete="off"/>
+      <button type="submit" class="chat-send-btn" aria-label="Send">➤</button>
+    </form>
+  `;
+  document.body.appendChild(panel);
+
+  function renderChat() {
+    const body = document.getElementById('chat-body');
+    if(chatHistory.length === 0) {
+      body.innerHTML = `
+        <div class="chat-empty">
+          <div class="chat-empty-icon">🌱</div>
+          <p>Ask me anything about your garden's current conditions — temperature, humidity, light, soil moisture...</p>
+        </div>`;
+      return;
+    }
+    body.innerHTML = chatHistory.map(m => `
+      <div class="chat-msg ${m.role}">
+        <div class="chat-bubble">${m.content || '<span class="chat-typing">●●●</span>'}</div>
+      </div>`).join('');
+    body.scrollTop = body.scrollHeight;
+  }
+  renderChat();
+
+  function saveChat() {
+    localStorage.setItem(CHAT_KEY, JSON.stringify(chatHistory.slice(-30)));
+  }
+
+  function openChat() {
+    panel.classList.add('open');
+    trigger.classList.add('hidden');
+    setTimeout(() => document.getElementById('chat-input')?.focus(), 100);
+  }
+  function closeChat() {
+    panel.classList.remove('open');
+    trigger.classList.remove('hidden');
+  }
+
+  trigger.addEventListener('click', openChat);
+  document.getElementById('chat-close-btn').addEventListener('click', closeChat);
+  document.getElementById('chat-clear-btn').addEventListener('click', () => {
+    chatHistory = [];
+    saveChat();
+    renderChat();
+  });
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && panel.classList.contains('open')) closeChat();
+  });
+
+  document.getElementById('chat-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    if(sending) return;
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    sending = true;
+
+    chatHistory.push({ role: 'user', content: text });
+    chatHistory.push({ role: 'assistant', content: '' });
+    saveChat();
+    renderChat();
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: chatHistory.slice(0, -1) }),
+      });
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      while(true) {
+        const { done, value } = await reader.read();
+        if(done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split('\n\n');
+        buffer = parts.pop();
+        for(const part of parts) {
+          if(!part.startsWith('data: ')) continue;
+          const payload = part.slice(6);
+          if(payload === '[DONE]') continue;
+          const { text: chunk } = JSON.parse(payload);
+          chatHistory[chatHistory.length - 1].content += chunk;
+          renderChat();
+        }
+      }
+    } catch(err) {
+      chatHistory[chatHistory.length - 1].content = '(Could not reach the chat server. Please try again.)';
+      renderChat();
+    }
+
+    saveChat();
+    sending = false;
+  });
+})();
