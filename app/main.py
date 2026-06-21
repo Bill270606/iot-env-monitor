@@ -7,12 +7,14 @@ from pydantic import BaseModel
 from typing import Optional, List
 import math, time, random, json, os
 from collections import deque
-import anthropic
+from google import genai
+from google.genai import types as genai_types
+from google.genai import errors as genai_errors
 
 app = FastAPI(title="EnvMonitor IoT")
 history = deque(maxlen=50)
-chat_client = anthropic.Anthropic() if os.environ.get("ANTHROPIC_API_KEY") else None
-CHAT_MODEL = "claude-haiku-4-5"
+chat_client = genai.Client(api_key=os.environ["GEMINI_API_KEY"]) if os.environ.get("GEMINI_API_KEY") else None
+CHAT_MODEL = "gemini-2.5-flash"
 
 @app.exception_handler(StarletteHTTPException)
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
@@ -145,25 +147,30 @@ def build_chat_system_prompt():
 def chat(req: ChatRequest):
     if chat_client is None:
         def missing_key():
-            msg = "Chat is not configured yet — the server is missing an ANTHROPIC_API_KEY."
+            msg = "Chat is not configured yet — the server is missing a GEMINI_API_KEY."
             yield f"data: {json.dumps({'text': msg})}\n\n"
             yield "data: [DONE]\n\n"
         return StreamingResponse(missing_key(), media_type="text/event-stream")
 
     system_prompt = build_chat_system_prompt()
-    messages = [{"role": m.role, "content": m.content} for m in req.messages]
+    contents = [
+        genai_types.Content(
+            role="model" if m.role == "assistant" else "user",
+            parts=[genai_types.Part.from_text(text=m.content)],
+        )
+        for m in req.messages
+    ]
 
     def generate():
         try:
-            with chat_client.messages.stream(
+            for chunk in chat_client.models.generate_content_stream(
                 model=CHAT_MODEL,
-                max_tokens=1024,
-                system=system_prompt,
-                messages=messages,
-            ) as stream:
-                for text in stream.text_stream:
-                    yield f"data: {json.dumps({'text': text})}\n\n"
-        except anthropic.APIError as e:
+                contents=contents,
+                config=genai_types.GenerateContentConfig(system_instruction=system_prompt),
+            ):
+                if chunk.text:
+                    yield f"data: {json.dumps({'text': chunk.text})}\n\n"
+        except genai_errors.APIError as e:
             yield f"data: {json.dumps({'text': f'(Chat error: {e.message})'})}\n\n"
         yield "data: [DONE]\n\n"
 
