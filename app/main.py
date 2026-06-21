@@ -92,6 +92,12 @@ def charts_page(): return FileResponse("app/static/charts.html")
 @app.get("/settings")
 def settings_page(): return FileResponse("app/static/settings.html")
 
+@app.get("/privacy")
+def privacy_page(): return FileResponse("app/static/privacy.html")
+
+@app.get("/terms")
+def terms_page(): return FileResponse("app/static/terms.html")
+
 @app.post("/auth/login")
 def do_login(data: LoginData):
     name = data.email.split("@")[0].replace(".", " ").title() if "@" in data.email else "Demo User"
