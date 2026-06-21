@@ -92,6 +92,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .bw-items{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .bw-item{display:inline-flex;align-items:center;gap:6px;background:#f7f8fc;border:1px solid var(--b);border-radius:20px;padding:6px 14px;font-size:.8rem;font-weight:600;color:var(--t)}
 
+/* DASHBOARD MOCKUP PREVIEW */
+.mockup-frame{max-width:880px;margin:0 auto;border-radius:16px;overflow:hidden;background:#0d1626;box-shadow:0 40px 80px -24px #0f172940,0 1px 0 #ffffff10 inset;border:1px solid #1a2d4a}
+.mockup-bar{display:flex;align-items:center;gap:8px;padding:11px 16px;background:#070d1a;border-bottom:1px solid #1a2d4a}
+.mockup-dot{width:10px;height:10px;border-radius:50%}
+.mockup-url{margin:0 auto;font-size:.72rem;color:#4a6a8a;font-family:monospace}
+.mockup-body{display:flex;min-height:280px}
+.mockup-sidebar{width:150px;flex-shrink:0;background:#070d1a;border-right:1px solid #1a2d4a;padding:16px 10px;display:flex;flex-direction:column;gap:4px}
+.mockup-logo{font-size:.72rem;font-weight:800;color:#00d4ff;letter-spacing:.5px;padding:0 8px 14px}
+.mockup-nav-item{font-size:.74rem;color:#4a6a8a;padding:7px 10px;border-radius:7px;display:flex;align-items:center;gap:7px}
+.mockup-nav-item.active{background:linear-gradient(135deg,#6366f1,#00d4ff);color:#fff;font-weight:600}
+.mockup-main{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px}
+.mockup-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mockup-card{background:#131e36;border:1px solid #1a2d4a;border-radius:10px;padding:13px 14px}
+.mc-label{font-size:.66rem;color:#4a6a8a;font-weight:600;margin-bottom:6px}
+.mc-value{font-size:1.2rem;font-weight:800}
+.mockup-chart{flex:1;background:#131e36;border:1px solid #1a2d4a;border-radius:10px;padding:14px;min-height:90px}
+.mockup-chart svg{width:100%;height:100%}
+@media(max-width:640px){.mockup-sidebar{display:none}.mockup-cards{grid-template-columns:1fr}}
+
 /* FEATURES */
 .fg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .fc{background:var(--card);border:1px solid var(--b);border-radius:18px;padding:28px;transition:border-color .3s,transform .25s,box-shadow .3s;box-shadow:0 1px 2px #0f172906}
@@ -112,6 +131,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .hg::before{content:'';position:absolute;top:32px;left:calc(16.67% + 24px);right:calc(16.67% + 24px);height:1px;background:linear-gradient(90deg,var(--p),var(--s))}
 .hs{text-align:center}
 .hn{width:64px;height:64px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;margin:0 auto 22px;position:relative;z-index:1;box-shadow:0 10px 24px -6px #6366f150;color:#fff}
+.hn svg{width:28px;height:28px}
 .hs h3{font-size:1rem;font-weight:700;margin-bottom:9px;color:var(--t)}
 .hs p{font-size:.86rem;color:var(--m);line-height:1.65}
 
@@ -260,6 +280,45 @@ footer p.fmuted{font-size:.8rem;color:var(--m);opacity:.7}
   </div>
 </div>
 
+<!-- DASHBOARD PREVIEW -->
+<div class="section" style="padding-top:0">
+  <div class="container">
+    <div class="stag">✦ Live Preview</div>
+    <h2 class="sh fi-in">See the dashboard<br/>in action</h2>
+    <p class="sp fi-in">A real-time control center for your environment — sensors, charts and alerts in one place.</p>
+    <div class="mockup-frame fi-in">
+      <div class="mockup-bar">
+        <span class="mockup-dot" style="background:#ff5f57"></span>
+        <span class="mockup-dot" style="background:#febc2e"></span>
+        <span class="mockup-dot" style="background:#28c840"></span>
+        <span class="mockup-url">iot-env-monitor.onrender.com/dashboard</span>
+      </div>
+      <div class="mockup-body">
+        <div class="mockup-sidebar">
+          <div class="mockup-logo">◈ ENVMONITOR</div>
+          <div class="mockup-nav-item active">🏠 Overview</div>
+          <div class="mockup-nav-item">📡 Sensors</div>
+          <div class="mockup-nav-item">⚠️ Alerts</div>
+          <div class="mockup-nav-item">📊 Charts</div>
+          <div class="mockup-nav-item">⚙️ Settings</div>
+        </div>
+        <div class="mockup-main">
+          <div class="mockup-cards">
+            <div class="mockup-card"><div class="mc-label">Temperature</div><div class="mc-value" style="color:#ff6b35">29.4°C</div></div>
+            <div class="mockup-card"><div class="mc-label">Humidity</div><div class="mc-value" style="color:#00b4d8">68%</div></div>
+            <div class="mockup-card"><div class="mc-label">Light</div><div class="mc-value" style="color:#ffd60a">412 lux</div></div>
+          </div>
+          <div class="mockup-chart">
+            <svg viewBox="0 0 300 80" preserveAspectRatio="none">
+              <polyline points="0,60 30,50 60,55 90,30 120,40 150,20 180,35 210,15 240,28 270,10 300,22" fill="none" stroke="#6366f1" stroke-width="2.5"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- FEATURES -->
 <div class="section" id="features">
   <div class="container">
@@ -296,9 +355,9 @@ footer p.fmuted{font-size:.8rem;color:var(--m);opacity:.7}
     <h2 class="sh fi-in">Simple & effective</h2>
     <p class="sp fi-in">Just 3 steps to start monitoring your environment today.</p>
     <div class="hg">
-      <div class="hs fi-in"><div class="hn">1</div><h3>Connect sensors</h3><p>ESP32 + DHT11 reads environmental data and sends it to the server every 2 seconds over WiFi.</p></div>
-      <div class="hs fi-in"><div class="hn">2</div><h3>Server processes data</h3><p>The FastAPI backend receives and stores the data, automatically detecting anomalies.</p></div>
-      <div class="hs fi-in"><div class="hn">3</div><h3>Dashboard displays it</h3><p>The web dashboard updates in real time. View it anytime from your browser.</p></div>
+      <div class="hs fi-in"><div class="hn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg></div><h3>Connect sensors</h3><p>ESP32 + DHT11 reads environmental data and sends it to the server every 2 seconds over WiFi.</p></div>
+      <div class="hs fi-in"><div class="hn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div><h3>Server processes data</h3><p>The FastAPI backend receives and stores the data, automatically detecting anomalies.</p></div>
+      <div class="hs fi-in"><div class="hn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><h3>Dashboard displays it</h3><p>The web dashboard updates in real time. View it anytime from your browser.</p></div>
     </div>
   </div>
 </div>
