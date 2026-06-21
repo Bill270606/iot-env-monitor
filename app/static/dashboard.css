@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 
 :root{
@@ -33,6 +33,12 @@ body[data-theme="light"] .focus-panel,
 body[data-theme="light"] .cmdk-panel{box-shadow:0 1px 2px #0f172908,0 6px 18px -4px #0f172914}
 
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);display:flex;min-height:100vh;overflow-x:hidden;transition:background .3s cubic-bezier(.4,0,.2,1),color .3s cubic-bezier(.4,0,.2,1)}
+
+/* HEADINGS — Poppins for titles, Inter stays for body/content */
+h1,h2,h3,h4,h5,h6,
+.sb-logo,.page-title,.gs-title,.section-title,.ce-title,.dd-title,.chat-head-title,.card-title{
+  font-family:'Poppins',sans-serif;
+}
 
 /* ── SIDEBAR ── */
 .sidebar{
@@ -69,13 +75,24 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);display:
 .badge-n{background:#ff2d55;color:#fff;font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto}
 .soon-badge{background:#ffffff10;color:var(--m);font-size:.6rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto;letter-spacing:.3px}
 
+/* SIDEBAR SYSTEM STATUS */
+.sb-status{margin:0 12px 10px;padding:14px 16px;border-radius:12px;background:#ffffff06;border:1px solid var(--b);display:flex;flex-direction:column;gap:10px}
+.sb-status-label{font-size:.62rem;font-weight:700;letter-spacing:1.5px;color:var(--m)}
+.sb-status-row{display:flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;color:var(--t)}
+.sb-status-dot{width:7px;height:7px;border-radius:50%;background:#4a6a8a;flex-shrink:0}
+.sb-status-dot.online{background:#10d876;box-shadow:0 0 0 3px #10d87625;animation:p 2s ease-in-out infinite}
+.sb-status-dot.offline{background:#ff4d6d;box-shadow:none;animation:none}
+.sb-status-key{font-size:.66rem;color:var(--m);margin-bottom:2px}
+.sb-status-val{font-size:.84rem;font-weight:700;color:var(--t);font-variant-numeric:tabular-nums}
+.sb-status-sensors{font-size:.76rem;font-weight:600;color:var(--m)}
+
 .sb-user{
   display:flex;align-items:center;gap:10px;padding:16px 16px;
   border-top:1px solid var(--b);background:#060c18;
 }
 .sb-avatar{width:36px;height:36px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0}
 .sb-info{flex:1;min-width:0}
-.sb-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-name{font-size:.85rem;font-weight:600;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sb-role{font-size:.72rem;color:var(--m)}
 .sb-logout{background:none;border:none;color:var(--m);cursor:pointer;font-size:1rem;padding:4px;border-radius:6px;transition:color .2s,background .2s}
 .sb-logout:hover{color:#ff7090;background:#ff2d5518}

@@ -185,6 +185,44 @@ function buildNotifDropdown() {
 }
 buildNotifDropdown();
 
+// ── SIDEBAR SYSTEM STATUS ──
+(function() {
+  const nav = document.querySelector('.sb-nav');
+  const sbUser = document.getElementById('sb-user');
+  if(!nav || !sbUser) return;
+
+  const box = document.createElement('div');
+  box.className = 'sb-status';
+  box.id = 'sb-status';
+  box.innerHTML = `
+    <div class="sb-status-label">SYSTEM STATUS</div>
+    <div class="sb-status-row"><span class="sb-status-dot" id="sbs-dot"></span><span id="sbs-text">Connecting…</span></div>
+    <div>
+      <div class="sb-status-key">Last Update</div>
+      <div class="sb-status-val" id="sbs-time">--:--:--</div>
+    </div>
+    <div class="sb-status-sensors" id="sbs-sensors">-- Sensors Active</div>
+  `;
+  nav.parentElement.insertBefore(box, sbUser);
+
+  const SENSOR_KEYS = ['temperature', 'humidity', 'lux', 'soilAO', 'rainAO', 'uvVoltage'];
+  async function pollStatus() {
+    try {
+      const d = await (await fetch('/data/latest')).json();
+      document.getElementById('sbs-dot').className = 'sb-status-dot online';
+      document.getElementById('sbs-text').textContent = 'Online';
+      document.getElementById('sbs-time').textContent = d.timestamp || '--:--:--';
+      const active = SENSOR_KEYS.filter(k => d[k] !== null && d[k] !== undefined).length;
+      document.getElementById('sbs-sensors').textContent = `${active} Sensors Active`;
+    } catch(e) {
+      document.getElementById('sbs-dot').className = 'sb-status-dot offline';
+      document.getElementById('sbs-text').textContent = 'Offline';
+    }
+  }
+  pollStatus();
+  setInterval(pollStatus, 5000);
+})();
+
 // ── SIDEBAR VERSION FOOTER ──
 (function() {
   const nav = document.querySelector('.sb-nav');
