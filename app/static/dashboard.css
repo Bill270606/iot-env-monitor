@@ -62,9 +62,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t);display:
 .nav-item.active{background:var(--grad);color:#fff;border:1px solid transparent;box-shadow:0 6px 16px -4px #6366f160}
 .nav-item.disabled{cursor:not-allowed;opacity:.5}
 .nav-item.disabled:hover{background:none;color:var(--m)}
-.ni{font-size:1rem;width:20px;text-align:center;filter:grayscale(1);opacity:.8;transition:filter .2s cubic-bezier(.4,0,.2,1),opacity .2s cubic-bezier(.4,0,.2,1)}
+.ni{width:20px;height:20px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;opacity:.8;transition:opacity .2s cubic-bezier(.4,0,.2,1)}
+.ni svg{width:18px;height:18px;display:block}
 .nav-item:hover .ni{opacity:.95}
-.nav-item.active .ni{filter:none;opacity:1}
+.nav-item.active .ni{opacity:1}
 .badge-n{background:#ff2d55;color:#fff;font-size:.65rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto}
 .soon-badge{background:#ffffff10;color:var(--m);font-size:.6rem;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto;letter-spacing:.3px}
 
