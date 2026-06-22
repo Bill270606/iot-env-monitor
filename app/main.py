@@ -5,7 +5,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.requests import Request
 from pydantic import BaseModel
 from typing import Optional, List
-import math, time, random, json, os
+import time, json, os
 from collections import deque
 from google import genai
 from google.genai import types as genai_types
@@ -27,28 +27,20 @@ last_device_data = None
 last_device_time = 0
 DEVICE_FRESH_WINDOW = 30  # seconds — how long a device reading is considered "live"
 
-def fake_data():
-    t = time.time()
-    d = {
-        "temperature": round(29 + 7  * math.sin(t/30)      + random.uniform(-0.3,0.3), 1),
-        "humidity":    round(max(0,min(100, 68+18*math.sin(t/45+1)+random.uniform(-0.5,0.5))), 1),
-        "lux":         round(max(0, 400+350*math.sin(t/35+2) + random.uniform(-10,10)), 1),
-        "rainDO":      0,
-        "rainAO":      round(max(0, 3800+200*math.sin(t/60+3) + random.uniform(-50,50))),
-        "soilDO":      0,
-        "soilAO":      round(max(0, 2200+400*math.sin(t/50+4)+random.uniform(-50,50))),
-        "uvVoltage":   round(max(0, 1.2+0.8*math.sin(t/40+5)  + random.uniform(-0.05,0.05)), 2),
-        "timestamp":   time.strftime("%H:%M:%S"),
-        "date":        time.strftime("%d/%m/%Y"),
-        "source":      "simulated",
+def no_signal_data():
+    return {
+        "temperature": None, "humidity": None, "lux": None,
+        "rainDO": None, "rainAO": None, "soilDO": None, "soilAO": None,
+        "uvVoltage": None,
+        "timestamp": time.strftime("%H:%M:%S"),
+        "date": time.strftime("%d/%m/%Y"),
+        "source": "none",
     }
-    history.append(d)
-    return d
 
 def latest_data():
     if last_device_data is not None and (time.time() - last_device_time) < DEVICE_FRESH_WINDOW:
         return last_device_data
-    return fake_data()
+    return no_signal_data()
 
 class LoginData(BaseModel):
     email: str
@@ -127,13 +119,21 @@ def receive(data: SensorData):
 
 def build_chat_system_prompt():
     d = latest_data()
-    return (
+    base = (
         "You are the EnvMonitor Assistant, a friendly helper built into a small IoT "
         "environmental monitoring dashboard for a garden/farm. Answer questions about "
         "the current conditions and give short, practical, plain-language advice. "
         "Keep replies to 2-4 sentences unless the user asks for more detail. "
         "If a question has nothing to do with the dashboard or the garden, answer briefly "
         "and steer back to what you can help with.\n\n"
+    )
+    if d.get("source") == "none":
+        return base + (
+            "No sensor device is currently connected or reporting data — there is no "
+            "signal right now. If asked about current conditions, say so plainly and "
+            "suggest checking that the ESP32 device is powered on and connected to WiFi."
+        )
+    return base + (
         f"Live sensor readings (source: {d.get('source')}, as of {d.get('timestamp')}):\n"
         f"- Temperature: {d.get('temperature')} °C\n"
         f"- Humidity: {d.get('humidity')} %\n"

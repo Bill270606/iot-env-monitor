@@ -454,25 +454,28 @@ function animateNum(el, target, suffix, decimals) {
   requestAnimationFrame(frame);
 }
 
+function setPreviewField(id, value, suffix, decimals, animate) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(value === null || value === undefined) {
+    el.textContent = 'No signal';
+    return;
+  }
+  if(animate) animateNum(el, value, suffix, decimals);
+  else el.textContent = value + suffix;
+}
+
 async function up() {
   try {
     const d = await (await fetch('/data/latest')).json();
-    if(firstLoad) {
-      firstLoad = false;
-      animateNum(document.getElementById('p-temp'), d.temperature, '°C', 1);
-      animateNum(document.getElementById('p-hum'),  d.humidity,    '%', 1);
-      animateNum(document.getElementById('p-lux'),  d.lux,         ' lux', 0);
-      animateNum(document.getElementById('p-soil'), d.soilAO,      ' raw', 0);
-      animateNum(document.getElementById('p-uv'),   d.uvVoltage,   ' V', 2);
-      animateNum(document.getElementById('p-rain'), d.rainAO,      ' raw', 0);
-    } else {
-      document.getElementById('p-temp').textContent  = d.temperature + '°C';
-      document.getElementById('p-hum').textContent   = d.humidity + '%';
-      document.getElementById('p-lux').textContent   = d.lux + ' lux';
-      document.getElementById('p-soil').textContent  = d.soilAO + ' raw';
-      document.getElementById('p-uv').textContent    = d.uvVoltage + ' V';
-      document.getElementById('p-rain').textContent  = d.rainAO + ' raw';
-    }
+    const animate = firstLoad;
+    firstLoad = false;
+    setPreviewField('p-temp', d.temperature, '°C', 1, animate);
+    setPreviewField('p-hum',  d.humidity,    '%', 1, animate);
+    setPreviewField('p-lux',  d.lux,         ' lux', 0, animate);
+    setPreviewField('p-soil', d.soilAO,      ' raw', 0, animate);
+    setPreviewField('p-uv',   d.uvVoltage,   ' V', 2, animate);
+    setPreviewField('p-rain', d.rainAO,      ' raw', 0, animate);
     document.getElementById('p-ts').textContent = d.timestamp;
   } catch(e) {}
 }

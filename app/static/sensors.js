@@ -72,7 +72,10 @@ async function fetchData() {
     hideConnectionError();
 
     const conn = document.getElementById('conn-status');
-    if(conn) { conn.classList.add('online'); conn.innerHTML = '<span class="conn-dot"></span>Connected'; }
+    if(conn) {
+      if(d.source === 'none') { conn.classList.remove('online'); conn.innerHTML = '<span class="conn-dot"></span>No signal'; }
+      else { conn.classList.add('online'); conn.innerHTML = '<span class="conn-dot"></span>Connected'; }
+    }
 
     updateSensorCards(d);
   } catch(e) {

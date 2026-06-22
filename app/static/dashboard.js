@@ -286,6 +286,16 @@ function setGauge(key, value) {
   const card = document.getElementById(`card-${key}`);
   if(!arc) return;
 
+  if(value === null || value === undefined) {
+    arc.style.strokeDashoffset = ARC;
+    if(val) val.textContent = '--';
+    if(badge) { badge.textContent = 'No signal'; badge.className = 'gc-badge'; }
+    if(card) card.classList.remove('warn');
+    lastValues[key] = null;
+    updateListRow(key, null, false);
+    return false;
+  }
+
   const pct = Math.max(0, Math.min(1, (value - cfg.min) / (cfg.max - cfg.min)));
   arc.style.strokeDashoffset = ARC * (1 - pct);
   if(val) val.textContent = value;
@@ -306,6 +316,11 @@ function updateListRow(key, value, warn) {
   const meta = UI_META[key];
   const lrv = document.getElementById(`lrv-${key}`);
   const lrb = document.getElementById(`lrb-${key}`);
+  if(value === null || value === undefined) {
+    if(lrv) lrv.textContent = 'No signal';
+    if(lrb) { lrb.textContent = '—'; lrb.className = 'lr-badge'; }
+    return;
+  }
   if(lrv) lrv.textContent = `${value} ${meta.unit}`;
   if(lrb) {
     lrb.textContent = warn ? '⚠ High' : '✓ Normal';
@@ -321,6 +336,16 @@ function setBar(key, value) {
   const badge = document.getElementById(`b-${key}`);
   const card = document.getElementById(`card-${key}`);
   if(!bar) return;
+
+  if(value === null || value === undefined) {
+    bar.style.width = '0%';
+    if(val) val.innerHTML = `No signal`;
+    if(badge) { badge.textContent = 'No signal'; badge.className = 'gc-badge'; }
+    if(card) card.classList.remove('warn');
+    lastValues[key] = null;
+    updateListRow(key, null, false);
+    return false;
+  }
 
   const pct = Math.max(0, Math.min(100, (value-cfg.min)/(cfg.max-cfg.min)*100));
   bar.style.width = `${pct}%`;
@@ -492,6 +517,22 @@ function renderFarmerAlerts(alerts) {
 }
 
 function updateFarmerView(d) {
+  if(d.source === 'none') {
+    const gsTemp = document.getElementById('gs-temp');
+    const gsHum  = document.getElementById('gs-hum');
+    const gsLux  = document.getElementById('gs-lux');
+    if(gsTemp) gsTemp.textContent = '--';
+    if(gsHum)  gsHum.textContent  = '--';
+    if(gsLux)  gsLux.textContent  = '--';
+    setFarmerBlock('temp', 'No signal', 'No signal', 'warn');
+    setFarmerBlock('hum',  'No signal', 'No signal', 'warn');
+    setFarmerBlock('lux',  'No signal', 'No signal', 'warn');
+    renderFarmerAlerts([]);
+    const badge = document.getElementById('gs-badge');
+    if(badge) { badge.textContent = '📡 No signal from device'; badge.className = 'gs-badge warn'; }
+    return;
+  }
+
   const tempWarn = SENSORS.temp.warn ?? 35;
   const humWarn  = SENSORS.hum.warn  ?? 85;
   const soilWarn = SENSORS.soil.warn ?? 3000;
@@ -598,7 +639,15 @@ async function fetchData() {
 
     // Connection status
     const conn = document.getElementById('conn-status');
-    if(conn) { conn.classList.add('online'); conn.querySelector('span').style.display = 'inline-block'; conn.innerHTML = '<span class="conn-dot"></span>Connected'; }
+    if(conn) {
+      if(d.source === 'none') {
+        conn.classList.remove('online');
+        conn.innerHTML = '<span class="conn-dot"></span>No signal';
+      } else {
+        conn.classList.add('online');
+        conn.innerHTML = '<span class="conn-dot"></span>Connected';
+      }
+    }
 
     // Readings counter
     readings++;
